@@ -30,18 +30,36 @@ public abstract class LVQ<T>
 
     public abstract void reduceLearningRate();
 
-    public abstract void train();
-
     public void run()
     {
         this.initialization();
         while(!this.isSatisfied())
         {
-            this.train();
+            for(DatasetPojo data : this.dataset)
+            {
+                for(ProcessedWeightPojo<T> w : this.weight)
+                {
+                    w.calculateDistance(data);
+                }
+                final ProcessedWeightPojo<T> min = this.findMinimum(this.weight);
+                if(min.isSameSignature(data))
+                {
+                    min.moveToward(data);
+                }
+                else
+                {
+                    min.moveAway(data);
+                }
+            }
+            this.reduceLearningRate();
+            this.calculateAccuracy();
+            this.evaluateSatisfaction();
         }
-        this.reduceLearningRate();
-        this.evaluateSatisfaction();
     }
+
+    protected abstract void calculateAccuracy();
+
+    protected abstract ProcessedWeightPojo<T> findMinimum(List<ProcessedWeightPojo<T>> weight);
 
     public List<ProcessedWeightPojo<T>> getWeight()
     {
