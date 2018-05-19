@@ -42,4 +42,14 @@ public abstract class LVQ<T>
         this.reduceLearningRate();
         this.evaluateSatisfaction();
     }
+
+    public List<ProcessedWeightPojo<T>> getProcessed()
+    {
+        return this.processed;
+    }
+
+    public List<DatasetPojo> getDataset()
+    {
+        return this.dataset;
+    }
 }
