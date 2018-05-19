@@ -22,6 +22,12 @@ public abstract class ProcessedWeightPojo<T>
 
     public abstract void calculateDistance(DatasetPojo pojo);
 
+    public abstract boolean isSameSignature(DatasetPojo data);
+
+    public abstract void moveToward(DatasetPojo data);
+
+    public abstract void moveAway(DatasetPojo data);
+
     public double vector(String key, double value)
     {
         return weight.vector(key, value);
