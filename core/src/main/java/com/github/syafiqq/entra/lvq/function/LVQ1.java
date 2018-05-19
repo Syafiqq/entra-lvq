@@ -38,7 +38,7 @@ public class LVQ1 extends LVQ<Double>
 
     @Override public void evaluateSatisfaction()
     {
-
+        ++counter;
     }
 
     @Override public void reduceLearningRate()
