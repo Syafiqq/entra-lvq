@@ -37,4 +37,9 @@ public abstract class ProcessedWeightPojo<T>
     {
         return weight.vector(key);
     }
+
+    public T getDistance()
+    {
+        return this.distance;
+    }
 }
