@@ -1,5 +1,7 @@
 package com.github.syafiqq.entra.lvq.database
 
+import com.github.syafiqq.entra.lvq.seeder.DatasetSeeder
+import com.github.syafiqq.entra.lvq.seeder.WeightSeeder
 import org.junit.BeforeClass
 import org.junit.Test
 
@@ -41,5 +43,13 @@ class DatabaseGenerator: DatabaseDispatcher
     {
         this.down()
         this.up()
+    }
+
+    @Test
+    fun refreshAndSeed()
+    {
+        this.refresh()
+        WeightSeeder().run(WeightSeeder::addInitial)
+        DatasetSeeder().run(DatasetSeeder::addInitial)
     }
 }
