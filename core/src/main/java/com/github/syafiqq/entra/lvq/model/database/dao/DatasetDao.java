@@ -86,6 +86,7 @@ public class DatasetDao
                     pojo.vector(idx, result.getObject(idx, Double.class));
                 }
                 pojo.target = result.getObject("no", Integer.class);
+                list.add(pojo);
             }
             result.close();
             statement.close();
