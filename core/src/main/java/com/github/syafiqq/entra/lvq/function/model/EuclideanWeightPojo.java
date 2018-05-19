@@ -27,4 +27,9 @@ public class EuclideanWeightPojo extends ProcessedWeightPojo<Double>
         pojo.vector.forEach((idx, val) -> distance.accumulateAndGet(Math.pow(super.vector(idx) - val, 2), adder));
         super.distance = Math.sqrt(distance.get());
     }
+
+    @Override public String toString()
+    {
+        return super.weight.toString();
+    }
 }
