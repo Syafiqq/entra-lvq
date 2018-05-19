@@ -24,9 +24,9 @@ public class LVQ1 extends LVQ<Double>
         final List<DatasetPojo> dataset = DatasetDao.getAll(Settings.DB);
         final List<WeightPojo> weight = WeightDao.getAll(Settings.DB);
         super.dataset.clear();
-        super.processed.clear();
+        super.weight.clear();
         super.dataset.addAll(dataset);
-        super.processed.addAll(weight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()));
+        super.weight.addAll(weight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()));
     }
 
     @Override public boolean isSatisfied()

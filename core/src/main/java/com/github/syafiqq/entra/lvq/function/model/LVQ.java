@@ -13,12 +13,12 @@ import java.util.List;
  */
 public abstract class LVQ<T>
 {
-    protected final List<ProcessedWeightPojo<T>> processed;
+    protected final List<ProcessedWeightPojo<T>> weight;
     protected final List<DatasetPojo> dataset;
 
     public LVQ()
     {
-        this.processed = new LinkedList<>();
+        this.weight = new LinkedList<>();
         this.dataset = new LinkedList<>();
     }
 
@@ -43,9 +43,9 @@ public abstract class LVQ<T>
         this.evaluateSatisfaction();
     }
 
-    public List<ProcessedWeightPojo<T>> getProcessed()
+    public List<ProcessedWeightPojo<T>> getWeight()
     {
-        return this.processed;
+        return this.weight;
     }
 
     public List<DatasetPojo> getDataset()
