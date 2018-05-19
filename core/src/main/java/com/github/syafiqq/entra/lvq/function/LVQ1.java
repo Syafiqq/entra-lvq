@@ -2,6 +2,7 @@ package com.github.syafiqq.entra.lvq.function;
 
 import com.github.syafiqq.entra.lvq.function.model.EuclideanWeightPojo;
 import com.github.syafiqq.entra.lvq.function.model.LVQ;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
 import com.github.syafiqq.entra.lvq.model.database.dao.DatasetDao;
 import com.github.syafiqq.entra.lvq.model.database.dao.WeightDao;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
@@ -19,7 +20,10 @@ import java.util.stream.Collectors;
  */
 public class LVQ1 extends LVQ<Double>
 {
-    int counter = 0;
+    public int counter = 0;
+    public double learningRate = 0.05;
+    public double lrReduction = 0.1;
+    public double lrThreshold = 1e-11;
 
     @Override public void initialization()
     {
@@ -33,7 +37,7 @@ public class LVQ1 extends LVQ<Double>
 
     @Override public boolean isSatisfied()
     {
-        return counter > 5;
+        return counter > 5 || this.learningRate < this.lrThreshold;
     }
 
     @Override public void evaluateSatisfaction()
@@ -43,11 +47,16 @@ public class LVQ1 extends LVQ<Double>
 
     @Override public void reduceLearningRate()
     {
+        this.learningRate -= (this.learningRate * this.lrReduction);
+    }
+
+    @Override protected void calculateAccuracy()
+    {
 
     }
 
-    @Override public void train()
+    @Override protected ProcessedWeightPojo<Double> findMinimum(List<ProcessedWeightPojo<Double>> weight)
     {
-
+        return null;
     }
 }
