@@ -28,6 +28,21 @@ public class EuclideanWeightPojo extends ProcessedWeightPojo<Double>
         super.distance = Math.sqrt(distance.get());
     }
 
+    @Override public boolean isSameSignature(DatasetPojo data)
+    {
+        return false;
+    }
+
+    @Override public void moveToward(DatasetPojo data)
+    {
+
+    }
+
+    @Override public void moveAway(DatasetPojo data)
+    {
+
+    }
+
     @Override public String toString()
     {
         return super.weight.toString();
