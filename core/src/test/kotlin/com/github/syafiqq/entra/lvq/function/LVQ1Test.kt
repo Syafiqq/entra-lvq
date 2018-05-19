@@ -21,12 +21,22 @@ class LVQ1Test
     }
 
     @Test
-    fun `it_should_have_non_empty_data_after_initialize`()
+    fun `it_should_have_non_empty_dataset_after_initialize`()
     {
         val lvq = LVQ1()
         lvq.initialization()
         Assert.assertNotNull(lvq)
         Assert.assertTrue(lvq.dataset.size > 0)
+        lvq.dataset.forEach(System.out::println)
+    }
+
+    @Test
+    fun `it_should_have_non_empty_weight_after_initialize`()
+    {
+        val lvq = LVQ1()
+        lvq.initialization()
+        Assert.assertNotNull(lvq)
         Assert.assertTrue(lvq.weight.size > 0)
+        lvq.weight.forEach(System.out::println)
     }
 }
