@@ -7,7 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,12 +42,10 @@ public class DatasetDao
             @NotNull final PreparedStatement statement = db.getConnection().prepareStatement("INSERT OR REPLACE INTO " + TABLE + " (`no`, `g1`, `g2`, `g3`, `g4`, `g5`, `g6`, `g7`, `g8`, `g9`, `g10`, `g11`, `g12`, `g13`, `g14`, `g15`, `g16`, `g17`, `g18`, `g19`, `g20`, `g21`, `target`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             AtomicInteger c = new AtomicInteger();
             statement.setObject(c.incrementAndGet(), pojo.id, Types.INTEGER);
-            Arrays.stream(Settings.columns).forEach((idx) -> {
-                // @formatter:off
-                try { statement.setObject(c.incrementAndGet(), pojo.vector(idx), Types.DOUBLE); }
-                catch(SQLException ignored) {}
-                // @formatter:on
-            });
+            for(String idx : Settings.columns)
+            {
+                statement.setObject(c.incrementAndGet(), pojo.vector(idx), Types.DOUBLE);
+            }
             statement.setObject(c.incrementAndGet(), pojo.target, Types.INTEGER);
             statement.execute();
             statement.close();
@@ -64,5 +63,38 @@ public class DatasetDao
             e.printStackTrace();
         }
         return id;
+    }
+
+    public static List<DatasetPojo> getAll(@NotNull DatabaseApp db)
+    {
+        db.setProperties(db);
+        final List<DatasetPojo> list = new LinkedList<>();
+        try
+        {
+            if(db.isClosed())
+            {
+                db.reconnect();
+            }
+            @NotNull final PreparedStatement statement = db.getConnection().prepareStatement("SELECT * FROM " + TABLE);
+            @NotNull final ResultSet result = statement.executeQuery();
+            while(result.next())
+            {
+                final DatasetPojo pojo = new DatasetPojo();
+                pojo.id = result.getObject("no", Integer.class);
+                for(String idx : Settings.columns)
+                {
+                    pojo.vector(idx, result.getObject(idx, Double.class));
+                }
+                pojo.target = result.getObject("no", Integer.class);
+            }
+            result.close();
+            statement.close();
+            db.close();
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
