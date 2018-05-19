@@ -32,4 +32,32 @@ public class WeightPojo
     {
         return vector.getOrDefault(key, -1);
     }
+
+    @Override public String toString()
+    {
+        return String.format("%d, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %g, %d",
+                this.id,
+                this.vector.getOrDefault("g1", 0.0),
+                this.vector.getOrDefault("g2", 0.0),
+                this.vector.getOrDefault("g3", 0.0),
+                this.vector.getOrDefault("g4", 0.0),
+                this.vector.getOrDefault("g5", 0.0),
+                this.vector.getOrDefault("g6", 0.0),
+                this.vector.getOrDefault("g7", 0.0),
+                this.vector.getOrDefault("g8", 0.0),
+                this.vector.getOrDefault("g9", 0.0),
+                this.vector.getOrDefault("g10", 0.0),
+                this.vector.getOrDefault("g11", 0.0),
+                this.vector.getOrDefault("g12", 0.0),
+                this.vector.getOrDefault("g13", 0.0),
+                this.vector.getOrDefault("g14", 0.0),
+                this.vector.getOrDefault("g15", 0.0),
+                this.vector.getOrDefault("g16", 0.0),
+                this.vector.getOrDefault("g17", 0.0),
+                this.vector.getOrDefault("g18", 0.0),
+                this.vector.getOrDefault("g19", 0.0),
+                this.vector.getOrDefault("g20", 0.0),
+                this.vector.getOrDefault("g21", 0.0),
+                this.target);
+    }
 }
