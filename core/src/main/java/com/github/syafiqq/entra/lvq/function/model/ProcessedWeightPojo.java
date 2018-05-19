@@ -15,6 +15,11 @@ public abstract class ProcessedWeightPojo<T>
     protected WeightPojo weight;
     protected T distance;
 
+    public ProcessedWeightPojo(WeightPojo pojo)
+    {
+        this.weight = pojo;
+    }
+
     public abstract void calculateDistance(DatasetPojo pojo);
 
     public double vector(String key, double value)

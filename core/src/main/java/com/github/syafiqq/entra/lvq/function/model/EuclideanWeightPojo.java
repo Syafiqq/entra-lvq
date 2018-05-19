@@ -1,6 +1,7 @@
 package com.github.syafiqq.entra.lvq.function.model;
 
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
+import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
 
@@ -14,6 +15,11 @@ import java.util.function.BinaryOperator;
 public class EuclideanWeightPojo extends ProcessedWeightPojo<Double>
 {
     private final static BinaryOperator<Double> adder = (n1, n2) -> n1 + n2;
+
+    public EuclideanWeightPojo(WeightPojo pojo)
+    {
+        super(pojo);
+    }
 
     @Override public void calculateDistance(DatasetPojo pojo)
     {
