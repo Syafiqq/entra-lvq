@@ -136,6 +136,29 @@ class DatasetSeeder
         DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(115, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 9) })
         DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(116, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 9) })
     }
+
+    @Test
+    fun forDebugOnly()
+    {
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(2, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(3, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(4, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 2) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 3) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(6, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 3) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(7, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 4) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(8, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 4) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(9, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 5) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(10, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 5) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(11, 1, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 6) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(12, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 6) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(13, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 7) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(14, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 7) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(15, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 8) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(16, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 8) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(17, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 9) })
+        DatasetDao.insert(Settings.DB, DatasetPojo().apply { set(18, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 9) })
+    }
 }
 
 fun DatasetPojo.set(id: Int?, g1: Number, g2: Number, g3: Number, g4: Number, g5: Number, g6: Number, g7: Number, g8: Number, g9: Number, g10: Number, g11: Number, g12: Number, g13: Number, g14: Number, g15: Number, g16: Number, g17: Number, g18: Number, g19: Number, g20: Number, g21: Number, target: Int)
