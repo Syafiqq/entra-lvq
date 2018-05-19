@@ -8,6 +8,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,5 +66,39 @@ public class WeightDao
             e.printStackTrace();
         }
         return id;
+    }
+
+    public static List<WeightPojo> getAll(@NotNull DatabaseApp db)
+    {
+        db.setProperties(db);
+        final List<WeightPojo> list = new LinkedList<>();
+        try
+        {
+            if(db.isClosed())
+            {
+                db.reconnect();
+            }
+            @NotNull final PreparedStatement statement = db.getConnection().prepareStatement("SELECT * FROM " + TABLE);
+            @NotNull final ResultSet result = statement.executeQuery();
+            while(result.next())
+            {
+                final WeightPojo pojo = new WeightPojo();
+                pojo.id = result.getInt("no") == 0 || result.wasNull() ? null : result.getInt("no");
+                for(String idx : Settings.columns)
+                {
+                    pojo.vector(idx, result.getDouble(idx));
+                }
+                pojo.target = result.getInt("target");
+                list.add(pojo);
+            }
+            result.close();
+            statement.close();
+            db.close();
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
