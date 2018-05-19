@@ -8,6 +8,7 @@ import com.github.syafiqq.entra.lvq.model.database.dao.WeightDao;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 import com.github.syafiqq.entra.lvq.util.Settings;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +58,6 @@ public class LVQ1 extends LVQ<Double>
 
     @Override protected ProcessedWeightPojo<Double> findMinimum(List<ProcessedWeightPojo<Double>> weight)
     {
-        return null;
+        return super.weight.stream().min(Comparator.comparing(ProcessedWeightPojo::getDistance)).orElse(null);
     }
 }
