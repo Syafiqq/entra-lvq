@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
  */
 public class LVQ1 extends LVQ<Double>
 {
+    int counter = 0;
+
     @Override public void initialization()
     {
         final List<DatasetPojo> dataset = DatasetDao.getAll(Settings.DB);
@@ -31,7 +33,7 @@ public class LVQ1 extends LVQ<Double>
 
     @Override public boolean isSatisfied()
     {
-        return false;
+        return counter > 5;
     }
 
     @Override public void evaluateSatisfaction()
