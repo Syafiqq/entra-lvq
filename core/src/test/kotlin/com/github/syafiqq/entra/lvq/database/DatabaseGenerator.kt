@@ -35,4 +35,11 @@ class DatabaseGenerator: DatabaseDispatcher
     {
         dispatcher.forEach(DatabaseDispatcher::down)
     }
+
+    @Test
+    fun refresh()
+    {
+        this.down()
+        this.up()
+    }
 }
