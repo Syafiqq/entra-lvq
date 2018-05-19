@@ -80,12 +80,12 @@ public class DatasetDao
             while(result.next())
             {
                 final DatasetPojo pojo = new DatasetPojo();
-                pojo.id = result.getObject("no", Integer.class);
+                pojo.id = result.getInt("no") == 0 || result.wasNull() ? null : result.getInt("no");
                 for(String idx : Settings.columns)
                 {
-                    pojo.vector(idx, result.getObject(idx, Double.class));
+                    pojo.vector(idx, result.getDouble(idx));
                 }
-                pojo.target = result.getObject("no", Integer.class);
+                pojo.target = result.getInt("target");
                 list.add(pojo);
             }
             result.close();
