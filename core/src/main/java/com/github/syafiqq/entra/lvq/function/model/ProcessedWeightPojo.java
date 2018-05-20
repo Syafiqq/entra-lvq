@@ -1,6 +1,5 @@
 package com.github.syafiqq.entra.lvq.function.model;
 
-import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 
 /*
@@ -20,13 +19,13 @@ public abstract class ProcessedWeightPojo<T>
         this.weight = pojo;
     }
 
-    public abstract void calculateDistance(DatasetPojo pojo);
+    public abstract void calculateDistance(ProcessedDatasetPojo pojo);
 
-    public abstract boolean isSameSignature(DatasetPojo data);
+    public abstract boolean isSameSignature(ProcessedDatasetPojo data);
 
-    public abstract void moveToward(DatasetPojo data);
+    public abstract void moveToward(ProcessedDatasetPojo data);
 
-    public abstract void moveAway(DatasetPojo data);
+    public abstract void moveAway(ProcessedDatasetPojo data);
 
     public double vector(String key, double value)
     {

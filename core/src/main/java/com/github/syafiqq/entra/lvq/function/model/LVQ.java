@@ -1,6 +1,5 @@
 package com.github.syafiqq.entra.lvq.function.model;
 
-import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public abstract class LVQ<T>
 {
     protected final List<ProcessedWeightPojo<T>> weight;
-    protected final List<DatasetPojo> dataset;
+    protected final List<ProcessedDatasetPojo> dataset;
 
     public LVQ()
     {
@@ -35,7 +34,7 @@ public abstract class LVQ<T>
         this.initialization();
         while(!this.isSatisfied())
         {
-            for(DatasetPojo data : this.dataset)
+            for(ProcessedDatasetPojo data : this.dataset)
             {
                 for(ProcessedWeightPojo<T> w : this.weight)
                 {
@@ -66,7 +65,7 @@ public abstract class LVQ<T>
         return this.weight;
     }
 
-    public List<DatasetPojo> getDataset()
+    public List<ProcessedDatasetPojo> getDataset()
     {
         return this.dataset;
     }
