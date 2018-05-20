@@ -2,6 +2,7 @@ package com.github.syafiqq.entra.lvq.function;
 
 import com.github.syafiqq.entra.lvq.function.model.EuclideanWeightPojo;
 import com.github.syafiqq.entra.lvq.function.model.LVQ;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
 import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
 import com.github.syafiqq.entra.lvq.model.database.dao.DatasetDao;
 import com.github.syafiqq.entra.lvq.model.database.dao.WeightDao;
@@ -25,6 +26,7 @@ public class LVQ1 extends LVQ<Double>
     public double learningRate = 0.05;
     public double lrReduction = 0.1;
     public double lrThreshold = 1e-11;
+    public double accuracy = 0;
 
     @Override public void initialization()
     {
@@ -32,7 +34,7 @@ public class LVQ1 extends LVQ<Double>
         final List<WeightPojo> weight = WeightDao.getAll(Settings.DB);
         super.dataset.clear();
         super.weight.clear();
-        super.dataset.addAll(dataset);
+        super.dataset.addAll(dataset.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()));
         super.weight.addAll(weight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()));
     }
 
@@ -53,7 +55,8 @@ public class LVQ1 extends LVQ<Double>
 
     @Override protected void calculateAccuracy()
     {
-
+        this.accuracy = this.dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count() / this.dataset.size() * 100;
+        System.out.printf("Iteration %d = %f", counter + 1, this.accuracy);
     }
 
     @Override protected ProcessedWeightPojo<Double> findMinimum(List<ProcessedWeightPojo<Double>> weight)
