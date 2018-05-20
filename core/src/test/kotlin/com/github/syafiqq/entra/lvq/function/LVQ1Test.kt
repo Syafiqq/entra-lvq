@@ -39,4 +39,12 @@ class LVQ1Test
         Assert.assertTrue(lvq.weight.size > 0)
         lvq.weight.forEach(System.out::println)
     }
+
+    @Test
+    fun `it_should_run_lvq_smoothly`()
+    {
+        val lvq = LVQ1()
+        lvq.run()
+        lvq.weight.forEach(System.out::println)
+    }
 }
