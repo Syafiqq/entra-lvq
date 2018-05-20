@@ -65,8 +65,8 @@ public class LVQ1 extends LVQ<Double>
 
     @Override protected void calculateAccuracy()
     {
-        this.accuracy = this.dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count() / this.dataset.size() * 100;
-        System.out.printf("Iteration %d = %f", counter + 1, this.accuracy);
+        this.accuracy = this.dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count() * 1.0f / this.dataset.size() * 100.f;
+        System.out.printf("Iteration %d = %f\n", counter + 1, this.accuracy);
     }
 
     @Override protected ProcessedWeightPojo<Double> findMinimum(List<ProcessedWeightPojo<Double>> weight)
