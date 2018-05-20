@@ -61,7 +61,7 @@ public class LVQ1 extends LVQ<Double>
         }
     }
 
-    @Override protected void moveToward(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> min)
+    @Override protected void moveCloser(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> min)
     {
         for(String idx : Settings.columns)
         {
