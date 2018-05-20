@@ -1,6 +1,5 @@
 package com.github.syafiqq.entra.lvq.function.model;
 
-import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BinaryOperator;
@@ -21,26 +20,17 @@ public class EuclideanWeightPojo extends ProcessedWeightPojo<Double>
         super(pojo);
     }
 
-    @Override public void calculateDistance(DatasetPojo pojo)
+    @Override public void calculateDistance(ProcessedDatasetPojo pojo)
     {
         AtomicReference<Double> distance = new AtomicReference<>((double) 0);
-        pojo.vector.forEach((idx, val) -> distance.accumulateAndGet(Math.pow(super.vector(idx) - val, 2), adder));
+        pojo.dataset.vector.forEach((idx, val) -> distance.accumulateAndGet(Math.pow(super.vector(idx) - val, 2), adder));
         super.distance = Math.sqrt(distance.get());
     }
 
-    @Override public boolean isSameSignature(DatasetPojo data)
+    @Override public boolean isSameSignature(ProcessedDatasetPojo data)
     {
-        return false;
-    }
-
-    @Override public void moveToward(DatasetPojo data)
-    {
-
-    }
-
-    @Override public void moveAway(DatasetPojo data)
-    {
-
+        data.actualTarget = super.weight.target;
+        return super.weight.target == data.dataset.target;
     }
 
     @Override public String toString()

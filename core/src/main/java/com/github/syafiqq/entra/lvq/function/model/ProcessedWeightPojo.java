@@ -23,10 +23,6 @@ public abstract class ProcessedWeightPojo<T>
 
     public abstract boolean isSameSignature(ProcessedDatasetPojo data);
 
-    public abstract void moveToward(ProcessedDatasetPojo data);
-
-    public abstract void moveAway(ProcessedDatasetPojo data);
-
     public double vector(String key, double value)
     {
         return weight.vector(key, value);
