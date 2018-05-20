@@ -1,5 +1,8 @@
 package com.github.syafiqq.entra.lvq.function
 
+import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo
+import com.github.syafiqq.entra.lvq.model.database.dao.DatasetDao
+import com.github.syafiqq.entra.lvq.util.Settings
 import org.junit.Assert
 import org.junit.Test
 
@@ -46,5 +49,16 @@ class LVQ1Test
         val lvq = LVQ1(0.05, 0.1, 1E-11, 5)
         lvq.training()
         lvq.weight.forEach(System.out::println)
+    }
+
+    @Test
+    fun `it_should_run_lvq_smoothly_with_test`()
+    {
+        val testing = mutableListOf(DatasetDao.getAll(Settings.DB).map(::ProcessedDatasetPojo)[0])
+        val lvq = LVQ1(0.05, 0.1, 1E-11, 5)
+        lvq.training()
+        lvq.testing(testing)
+        println(lvq.calculateAccuracy(testing))
+        println(testing[0].actualTarget)
     }
 }
