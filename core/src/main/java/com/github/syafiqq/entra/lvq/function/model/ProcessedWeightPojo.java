@@ -11,7 +11,7 @@ import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
  */
 public abstract class ProcessedWeightPojo<T>
 {
-    protected WeightPojo weight;
+    public WeightPojo weight;
     protected T distance;
 
     public ProcessedWeightPojo(WeightPojo pojo)
