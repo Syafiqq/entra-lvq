@@ -98,4 +98,25 @@ public class DatasetDao
         }
         return list;
     }
+
+    public static void delete(@NotNull DatabaseApp db, int id)
+    {
+        db.setProperties(db);
+        try
+        {
+            if(db.isClosed())
+            {
+                db.reconnect();
+            }
+            @NotNull final PreparedStatement statement = db.getConnection().prepareStatement(String.format("DELETE FROM %s WHERE `no` = ?", TABLE));
+            statement.setObject(1, id, Types.INTEGER);
+            statement.execute();
+            statement.close();
+
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }
