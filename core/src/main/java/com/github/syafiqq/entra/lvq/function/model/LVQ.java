@@ -56,6 +56,19 @@ public abstract class LVQ<T>
         }
     }
 
+    public void testing(List<ProcessedDatasetPojo> testing)
+    {
+        for(ProcessedDatasetPojo data : testing)
+        {
+            for(ProcessedWeightPojo<T> w : this.weight)
+            {
+                w.calculateDistance(data);
+            }
+            final ProcessedWeightPojo<T> min = this.findMinimum(this.weight);
+            min.isSameSignature(data);
+        }
+    }
+
     protected abstract void moveAway(ProcessedDatasetPojo data, ProcessedWeightPojo<T> min);
 
     protected abstract void moveCloser(ProcessedDatasetPojo data, ProcessedWeightPojo<T> min);
