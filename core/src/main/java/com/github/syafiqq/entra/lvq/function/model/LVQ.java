@@ -51,6 +51,7 @@ public abstract class LVQ<T>
                 }
             }
             this.reduceLearningRate();
+            System.out.printf("Accuracy = %f\n", this.calculateAccuracy(this.dataset));
             this.calculateAccuracy(this.dataset);
             this.evaluateSatisfaction();
         }
