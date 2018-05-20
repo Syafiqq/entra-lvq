@@ -60,7 +60,7 @@ public abstract class LVQ<T>
 
     protected abstract void moveCloser(ProcessedDatasetPojo data, ProcessedWeightPojo<T> min);
 
-    public abstract void calculateAccuracy(List<ProcessedDatasetPojo> dataset);
+    public abstract double calculateAccuracy(List<ProcessedDatasetPojo> dataset);
 
     protected abstract ProcessedWeightPojo<T> findMinimum(List<ProcessedWeightPojo<T>> weight);
 
