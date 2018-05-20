@@ -44,7 +44,7 @@ class LVQ1Test
     fun `it_should_run_lvq_smoothly`()
     {
         val lvq = LVQ1(0.05, 0.1, 1E-11, 5)
-        lvq.run()
+        lvq.training()
         lvq.weight.forEach(System.out::println)
     }
 }

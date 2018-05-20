@@ -29,7 +29,7 @@ public abstract class LVQ<T>
 
     public abstract void reduceLearningRate();
 
-    public void run()
+    public void training()
     {
         this.initialization();
         while(!this.isSatisfied())
