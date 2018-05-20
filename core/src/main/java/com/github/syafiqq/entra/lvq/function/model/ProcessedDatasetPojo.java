@@ -24,6 +24,16 @@ public class ProcessedDatasetPojo
         return this.dataset.target == this.actualTarget;
     }
 
+    public double vector(String key, double value)
+    {
+        return dataset.vector(key, value);
+    }
+
+    public double vector(String key)
+    {
+        return dataset.vector(key);
+    }
+
     @Override public String toString()
     {
         return this.dataset.toString();
