@@ -6,23 +6,21 @@
  */
 package com.github.syafiqq.entra.lvq.view;
 
-import java.sql.SQLException;
-import java.util.List;
+import com.github.syafiqq.entra.lvq.model.database.dao.DatasetDao;
+import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
+import com.github.syafiqq.entra.lvq.util.Settings;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import penyakitmatalvq.controller.datasetCon;
-import penyakitmatalvq.model.dataset;
 
 /**
  *
  * @author Entra
  */
-public class DatasetPenyakitMataFrame extends javax.swing.JInternalFrame {
+@SuppressWarnings("PointlessBooleanExpression") public class DatasetPenyakitMataFrame extends javax.swing.JInternalFrame {
 
     int row;
 
@@ -44,38 +42,21 @@ public class DatasetPenyakitMataFrame extends javax.swing.JInternalFrame {
         });
     }
 
-    public datasetCon dc = new datasetCon();
-    public List<dataset> list = new ArrayList<dataset>();
+    public List<DatasetPojo> list = new ArrayList<>();
 
     public void readTable() {
-        list = dc.getAll();
+        list = DatasetDao.getAll(Settings.DB);
         if (!list.isEmpty()) {
             Object[][] data = new Object[this.list.size()][23];
             int i = 0;
-            for (dataset dt : this.list) {
-                data[i][0] = dt.getNo();
-                data[i][1] = dt.getG1();
-                data[i][2] = dt.getG2();
-                data[i][3] = dt.getG3();
-                data[i][4] = dt.getG4();
-                data[i][5] = dt.getG5();
-                data[i][6] = dt.getG6();
-                data[i][7] = dt.getG7();
-                data[i][8] = dt.getG8();
-                data[i][9] = dt.getG9();
-                data[i][10] = dt.getG10();
-                data[i][11] = dt.getG11();
-                data[i][12] = dt.getG12();
-                data[i][13] = dt.getG13();
-                data[i][14] = dt.getG14();
-                data[i][15] = dt.getG15();
-                data[i][16] = dt.getG16();
-                data[i][17] = dt.getG17();
-                data[i][18] = dt.getG18();
-                data[i][19] = dt.getG19();
-                data[i][20] = dt.getG20();
-                data[i][21] = dt.getG21();
-                data[i][22] = dt.getTarget();
+            int c = -1;
+            for (DatasetPojo dt : this.list) {
+                data[i][++c] = dt.id;
+                for(String idx : Settings.columns)
+                {
+                    data[i][++c] = dt.vector(idx);
+                }
+                data[i][++c] = dt.target;
                 ++i;
             }
             this.datasetTable.setModel(new DefaultTableModel(data, new String[]{"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target"}));
@@ -86,177 +67,169 @@ public class DatasetPenyakitMataFrame extends javax.swing.JInternalFrame {
     }
 
     public void isiFormDataset() {
-        dataset dt = list.get(row);
-        noTextField.setText(dt.getNo());
+        DatasetPojo dt = list.get(row);
+        noTextField.setText(dt.id.toString());
 
         //gejala 1
-        if (dt.getG1().equals("1")) {
+        if (dt.vector("g1") == 1) {
             this.g1_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG1().equals("0")) {
+        } else if (dt.vector("g1") == 0) {
             this.g1_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 2
-        if (dt.getG2().equals("1")) {
+        if (dt.vector("g2") == 1) {
             this.g2_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG2().equals("0")) {
+        } else if (dt.vector("g2") == 0) {
             this.g2_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 3
-        if (dt.getG3().equals("1")) {
+        if (dt.vector("g3") == 1) {
             this.g3_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG3().equals("0")) {
+        } else if (dt.vector("g3") == 0) {
             this.g3_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 4
-        if (dt.getG4().equals("1")) {
+        if (dt.vector("g4") == 1) {
             this.g4_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG4().equals("0")) {
+        } else if (dt.vector("g4") == 0) {
             this.g4_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 5
-        if (dt.getG1().equals("1")) {
+        if (dt.vector("g5") == 1) {
             this.g5_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG5().equals("0")) {
+        } else if (dt.vector("g5") == 0) {
             this.g5_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 6
-        if (dt.getG6().equals("1")) {
+        if (dt.vector("g6") == 1) {
             this.g6_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG6().equals("0")) {
+        } else if (dt.vector("g6") == 0) {
             this.g6_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 7
-        if (dt.getG7().equals("1")) {
+        if (dt.vector("g7") == 1) {
             this.g7_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG7().equals("0")) {
+        } else if (dt.vector("g7") == 0) {
             this.g7_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 8
-        if (dt.getG8().equals("1")) {
+        if (dt.vector("g8") == 1) {
             this.g8_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG8().equals("0")) {
+        } else if (dt.vector("g8") == 0) {
             this.g8_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 9
-        if (dt.getG9().equals("1")) {
+        if (dt.vector("g9") == 1) {
             this.g9_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG9().equals("0")) {
+        } else if (dt.vector("g9") == 0) {
             this.g9_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 10
-        if (dt.getG10().equals("1")) {
+        if (dt.vector("g10") == 1) {
             this.g10_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG10().equals("0")) {
+        } else if (dt.vector("g10") == 0) {
             this.g10_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 11
-        if (dt.getG11().equals("1")) {
+        if (dt.vector("g11") == 1) {
             this.g11_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG11().equals("0")) {
+        } else if (dt.vector("g11") == 0) {
             this.g11_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 12
-        if (dt.getG12().equals("1")) {
+        if (dt.vector("g12") == 1) {
             this.g12_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG12().equals("0")) {
+        } else if (dt.vector("g12") == 0) {
             this.g12_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 13
-        if (dt.getG13().equals("1")) {
+        if (dt.vector("g13") == 1) {
             this.g13_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG13().equals("0")) {
+        } else if (dt.vector("g13") == 0) {
             this.g13_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 14
-        if (dt.getG14().equals("1")) {
+        if (dt.vector("g14") == 1) {
             this.g14_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG14().equals("0")) {
+        } else if (dt.vector("g14") == 0) {
             this.g14_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 15
-        if (dt.getG15().equals("1")) {
+        if (dt.vector("g15") == 1) {
             this.g15_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG15().equals("0")) {
+        } else if (dt.vector("g15") == 0) {
             this.g15_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 16
-        if (dt.getG16().equals("1")) {
+        if (dt.vector("g16") == 1) {
             this.g16_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG16().equals("0")) {
+        } else if (dt.vector("g16") == 0) {
             this.g16_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 17
-        if (dt.getG17().equals("1")) {
+        if (dt.vector("g17") == 1) {
             this.g17_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG17().equals("0")) {
+        } else if (dt.vector("g17") == 0) {
             this.g17_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 18
-        if (dt.getG18().equals("1")) {
+        if (dt.vector("g18") == 1) {
             this.g18_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG18().equals("0")) {
+        } else if (dt.vector("g18") == 0) {
             this.g18_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 19
-        if (dt.getG19().equals("1")) {
+        if (dt.vector("g19") == 1) {
             this.g19_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG19().equals("0")) {
+        } else if (dt.vector("g19") == 0) {
             this.g19_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 20
-        if (dt.getG20().equals("1")) {
+        if (dt.vector("g20") == 1) {
             this.g20_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG20().equals("0")) {
+        } else if (dt.vector("g20") == 0) {
             this.g20_Tidak_RadioButton.setSelected(true);
         }
 
         //gejala 21
-        if (dt.getG21().equals("1")) {
+        if (dt.vector("g21") == 1) {
             this.g21_Ya_RadioButton.setSelected(true);
-        } else if (dt.getG21().equals("0")) {
+        } else if (dt.vector("g22") == 0) {
             this.g21_Tidak_RadioButton.setSelected(true);
         }
 
         //target
-        if (dt.getTarget().equals("1")) {
-            this.penyakitComboBox.setSelectedItem("Glaukoma");
-        } else if (dt.getTarget().equals("2")) {
-            this.penyakitComboBox.setSelectedItem("Katarak");
-        } else if (dt.getTarget().equals("3")) {
-            this.penyakitComboBox.setSelectedItem("Konjungtivitis");
-        } else if (dt.getTarget().equals("4")) {
-            this.penyakitComboBox.setSelectedItem("Keratitis");
-        } else if (dt.getTarget().equals("5")) {
-            this.penyakitComboBox.setSelectedItem("Pterigium");
-        } else if (dt.getTarget().equals("6")) {
-            this.penyakitComboBox.setSelectedItem("Uveitis");
-        } else if (dt.getTarget().equals("7")) {
-            this.penyakitComboBox.setSelectedItem("Dry Eyes");
-        } else if (dt.getTarget().equals("8")) {
-            this.penyakitComboBox.setSelectedItem("Bleparitis");
-        } else {
-            this.penyakitComboBox.setSelectedItem("Kalazion");
+        switch(dt.target)
+        {
+            case 1 : this.penyakitComboBox.setSelectedItem("Glaukoma"); break;
+            case 2 : this.penyakitComboBox.setSelectedItem("Katarak"); break;
+            case 3 : this.penyakitComboBox.setSelectedItem("Konjungtivitis"); break;
+            case 4 : this.penyakitComboBox.setSelectedItem("Keratitis"); break;
+            case 5 : this.penyakitComboBox.setSelectedItem("Pterigium"); break;
+            case 6 : this.penyakitComboBox.setSelectedItem("Uveitis"); break;
+            case 7 : this.penyakitComboBox.setSelectedItem("Dry Eyes"); break;
+            case 8 : this.penyakitComboBox.setSelectedItem("Bleparitis"); break;
+            default : this.penyakitComboBox.setSelectedItem("Kalazion"); break;
         }
-
     }
 
     /**
@@ -842,210 +815,195 @@ public class DatasetPenyakitMataFrame extends javax.swing.JInternalFrame {
 
     private void tambahButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambahButtonActionPerformed
         // TODO add your handling code here:
-        dataset dt = new dataset();
-        dt.setNo(noTextField.getText());
+        DatasetPojo dt = new DatasetPojo();
+        dt.id  = Integer.valueOf(noTextField.getText());
 
         //gejala1
         if (g1_Ya_RadioButton.isSelected() == true) {
-            dt.setG1("1");
+            dt.vector("g1",1);
         }
         if (g1_Tidak_RadioButton.isSelected() == true) {
-            dt.setG1("0");
+            dt.vector("g1",0);
         }
 
         //gejala2
         if (g2_Ya_RadioButton.isSelected() == true) {
-            dt.setG2("1");
+            dt.vector("g2",1);
         }
         if (g2_Tidak_RadioButton.isSelected() == true) {
-            dt.setG2("0");
+            dt.vector("g2",0);
         }
 
         //gejala3
         if (g3_Ya_RadioButton.isSelected() == true) {
-            dt.setG3("1");
+            dt.vector("g3",1);
         }
         if (g3_Tidak_RadioButton.isSelected() == true) {
-            dt.setG3("0");
+            dt.vector("g3",0);
         }
 
         //gejala4
         if (g4_Ya_RadioButton.isSelected() == true) {
-            dt.setG4("1");
+            dt.vector("g4",1);
         }
         if (g4_Tidak_RadioButton.isSelected() == true) {
-            dt.setG4("0");
+            dt.vector("g4",0);
         }
 
         //gejala5
         if (g5_Ya_RadioButton.isSelected() == true) {
-            dt.setG5("1");
+            dt.vector("g5",1);
         }
         if (g5_Tidak_RadioButton.isSelected() == true) {
-            dt.setG5("0");
+            dt.vector("g5",0);
         }
 
         //gejala6
         if (g6_Ya_RadioButton.isSelected() == true) {
-            dt.setG6("1");
+            dt.vector("g6",1);
         }
         if (g6_Tidak_RadioButton.isSelected() == true) {
-            dt.setG6("0");
+            dt.vector("g6",0);
         }
 
         //gejala7
         if (g7_Ya_RadioButton.isSelected() == true) {
-            dt.setG7("1");
+            dt.vector("g7",1);
         }
         if (g7_Tidak_RadioButton.isSelected() == true) {
-            dt.setG7("0");
+            dt.vector("g7",0);
         }
 
         //gejala8
         if (g8_Ya_RadioButton.isSelected() == true) {
-            dt.setG8("1");
+            dt.vector("g8",1);
         }
         if (g8_Tidak_RadioButton.isSelected() == true) {
-            dt.setG8("0");
+            dt.vector("g8",0);
         }
 
         //gejala9
         if (g9_Ya_RadioButton.isSelected() == true) {
-            dt.setG9("1");
+            dt.vector("g9",1);
         }
         if (g9_Tidak_RadioButton.isSelected() == true) {
-            dt.setG9("0");
+            dt.vector("g9",0);
         }
 
         //gejala10
         if (g10_Ya_RadioButton.isSelected() == true) {
-            dt.setG10("1");
+            dt.vector("g10",1);
         }
         if (g10_Tidak_RadioButton.isSelected() == true) {
-            dt.setG10("0");
+            dt.vector("g10",0);
         }
 
         //gejala11
         if (g11_Ya_RadioButton.isSelected() == true) {
-            dt.setG11("1");
+            dt.vector("g11",1);
         }
         if (g11_Tidak_RadioButton.isSelected() == true) {
-            dt.setG11("0");
+            dt.vector("g11",0);
         }
 
         //gejala12
         if (g12_Ya_RadioButton.isSelected() == true) {
-            dt.setG12("1");
+            dt.vector("g12",1);
         }
         if (g12_Tidak_RadioButton.isSelected() == true) {
-            dt.setG12("0");
+            dt.vector("g12",0);
         }
 
         //gejala13
         if (g13_Ya_RadioButton.isSelected() == true) {
-            dt.setG13("1");
+            dt.vector("g13",1);
         }
         if (g13_Tidak_RadioButton.isSelected() == true) {
-            dt.setG13("0");
+            dt.vector("g13",0);
         }
 
         //gejala14
         if (g14_Ya_RadioButton.isSelected() == true) {
-            dt.setG14("1");
+            dt.vector("g14",1);
         }
         if (g14_Tidak_RadioButton.isSelected() == true) {
-            dt.setG14("0");
+            dt.vector("g14",0);
         }
 
         //gejala15
         if (g15_Ya_RadioButton.isSelected() == true) {
-            dt.setG15("1");
+            dt.vector("g15",1);
         }
         if (g15_Tidak_RadioButton.isSelected() == true) {
-            dt.setG15("0");
+            dt.vector("g15",0);
         }
 
         //gejala16
         if (g16_Ya_RadioButton.isSelected() == true) {
-            dt.setG16("1");
+            dt.vector("g16",1);
         }
         if (g16_Tidak_RadioButton.isSelected() == true) {
-            dt.setG16("0");
+            dt.vector("g16",0);
         }
 
         //gejala17
         if (g17_Ya_RadioButton.isSelected() == true) {
-            dt.setG17("1");
+            dt.vector("g17",1);
         }
         if (g17_Tidak_RadioButton.isSelected() == true) {
-            dt.setG17("0");
+            dt.vector("g17",0);
         }
 
         //gejala18
         if (g18_Ya_RadioButton.isSelected() == true) {
-            dt.setG18("1");
+            dt.vector("g18",1);
         }
         if (g18_Tidak_RadioButton.isSelected() == true) {
-            dt.setG18("0");
+            dt.vector("g18",0);
         }
 
         //gejala19
         if (g19_Ya_RadioButton.isSelected() == true) {
-            dt.setG19("1");
+            dt.vector("g19",1);
         }
         if (g19_Tidak_RadioButton.isSelected() == true) {
-            dt.setG19("0");
+            dt.vector("g19",0);
         }
 
         //gejala20
         if (g20_Ya_RadioButton.isSelected() == true) {
-            dt.setG20("1");
+            dt.vector("g20",1);
         }
         if (g20_Tidak_RadioButton.isSelected() == true) {
-            dt.setG20("0");
+            dt.vector("g20",0);
         }
 
         //gejala21
         if (g21_Ya_RadioButton.isSelected() == true) {
-            dt.setG21("1");
+            dt.vector("g21",1);
         }
         if (g21_Tidak_RadioButton.isSelected() == true) {
-            dt.setG21("0");
+            dt.vector("g21",0);
         }
 
         //target
-        if (penyakitComboBox.getSelectedItem() == "Glaukoma") {
-            dt.setTarget("1");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Katarak") {
-            dt.setTarget("2");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Konjungtivitis") {
-            dt.setTarget("3");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Keratitis") {
-            dt.setTarget("4");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Pterigium") {
-            dt.setTarget("5");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Uveitis") {
-            dt.setTarget("6");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Dry Eyes") {
-            dt.setTarget("7");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Bleparitis") {
-            dt.setTarget("8");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Kalazion") {
-            dt.setTarget("9");
+        switch(penyakitComboBox.getSelectedItem().toString())
+        {
+            case "Glaukoma"             : dt.target = 1;break;
+            case "Katarak"              : dt.target = 2;break;
+            case "Konjungtivitis"       : dt.target = 3;break;
+            case "Keratitis"            : dt.target = 4;break;
+            case "Pterigium"            : dt.target = 5;break;
+            case "Uveitis"              : dt.target = 6;break;
+            case "Dry Eyes"             : dt.target = 7;break;
+            case "Bleparitis"           : dt.target = 8;break;
+            default                     : dt.target = 9;break;
         }
 
         //balasan
         int balasan = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menambahkan data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         if (balasan == JOptionPane.YES_OPTION) {
-            String status = this.dc.insertDataset(dt);
+            DatasetDao.insert(Settings.DB, dt);
             JOptionPane.showMessageDialog(null, "Data Berhasil Ditambah");
             this.readTable();
         } else {
@@ -1061,7 +1019,7 @@ public class DatasetPenyakitMataFrame extends javax.swing.JInternalFrame {
         //balasan
         int balasan = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         if (balasan == JOptionPane.YES_OPTION) {
-            String status = this.dc.deleteDataset(no);
+            DatasetDao.delete(Settings.DB, Integer.valueOf(no));
             JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus");
             this.readTable();
         } else {
@@ -1073,209 +1031,194 @@ public class DatasetPenyakitMataFrame extends javax.swing.JInternalFrame {
 
     private void ubahButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ubahButtonActionPerformed
         // TODO add your handling code here:
-        dataset dt = new dataset();
-        dt.setNo(noTextField.getText());
+        DatasetPojo dt = new DatasetPojo();
+        dt.id  = Integer.valueOf(noTextField.getText());
 
         //gejala1
         if (g1_Ya_RadioButton.isSelected() == true) {
-            dt.setG1("1");
+            dt.vector("g1",1);
         }
         if (g1_Tidak_RadioButton.isSelected() == true) {
-            dt.setG1("0");
+            dt.vector("g1",0);
         }
 
         //gejala2
         if (g2_Ya_RadioButton.isSelected() == true) {
-            dt.setG2("1");
+            dt.vector("g2",1);
         }
         if (g2_Tidak_RadioButton.isSelected() == true) {
-            dt.setG2("0");
+            dt.vector("g2",0);
         }
 
         //gejala3
         if (g3_Ya_RadioButton.isSelected() == true) {
-            dt.setG3("1");
+            dt.vector("g3",1);
         }
         if (g3_Tidak_RadioButton.isSelected() == true) {
-            dt.setG3("0");
+            dt.vector("g3",0);
         }
 
         //gejala4
         if (g4_Ya_RadioButton.isSelected() == true) {
-            dt.setG4("1");
+            dt.vector("g4",1);
         }
         if (g4_Tidak_RadioButton.isSelected() == true) {
-            dt.setG4("0");
+            dt.vector("g4",0);
         }
 
         //gejala5
         if (g5_Ya_RadioButton.isSelected() == true) {
-            dt.setG5("1");
+            dt.vector("g5",1);
         }
         if (g5_Tidak_RadioButton.isSelected() == true) {
-            dt.setG5("0");
+            dt.vector("g5",0);
         }
 
         //gejala6
         if (g6_Ya_RadioButton.isSelected() == true) {
-            dt.setG6("1");
+            dt.vector("g6",1);
         }
         if (g6_Tidak_RadioButton.isSelected() == true) {
-            dt.setG6("0");
+            dt.vector("g6",0);
         }
 
         //gejala7
         if (g7_Ya_RadioButton.isSelected() == true) {
-            dt.setG7("1");
+            dt.vector("g7",1);
         }
         if (g7_Tidak_RadioButton.isSelected() == true) {
-            dt.setG7("0");
+            dt.vector("g7",0);
         }
 
         //gejala8
         if (g8_Ya_RadioButton.isSelected() == true) {
-            dt.setG8("1");
+            dt.vector("g8",1);
         }
         if (g8_Tidak_RadioButton.isSelected() == true) {
-            dt.setG8("0");
+            dt.vector("g8",0);
         }
 
         //gejala9
         if (g9_Ya_RadioButton.isSelected() == true) {
-            dt.setG9("1");
+            dt.vector("g9",1);
         }
         if (g9_Tidak_RadioButton.isSelected() == true) {
-            dt.setG9("0");
+            dt.vector("g9",0);
         }
 
         //gejala10
         if (g10_Ya_RadioButton.isSelected() == true) {
-            dt.setG10("1");
+            dt.vector("g10",1);
         }
         if (g10_Tidak_RadioButton.isSelected() == true) {
-            dt.setG10("0");
+            dt.vector("g10",0);
         }
 
         //gejala11
         if (g11_Ya_RadioButton.isSelected() == true) {
-            dt.setG11("1");
+            dt.vector("g11",1);
         }
         if (g11_Tidak_RadioButton.isSelected() == true) {
-            dt.setG11("0");
+            dt.vector("g11",0);
         }
 
         //gejala12
         if (g12_Ya_RadioButton.isSelected() == true) {
-            dt.setG12("1");
+            dt.vector("g12",1);
         }
         if (g12_Tidak_RadioButton.isSelected() == true) {
-            dt.setG12("0");
+            dt.vector("g12",0);
         }
 
         //gejala13
         if (g13_Ya_RadioButton.isSelected() == true) {
-            dt.setG13("1");
+            dt.vector("g13",1);
         }
         if (g13_Tidak_RadioButton.isSelected() == true) {
-            dt.setG13("0");
+            dt.vector("g13",0);
         }
 
         //gejala14
         if (g14_Ya_RadioButton.isSelected() == true) {
-            dt.setG14("1");
+            dt.vector("g14",1);
         }
         if (g14_Tidak_RadioButton.isSelected() == true) {
-            dt.setG14("0");
+            dt.vector("g14",0);
         }
 
         //gejala15
         if (g15_Ya_RadioButton.isSelected() == true) {
-            dt.setG15("1");
+            dt.vector("g15",1);
         }
         if (g15_Tidak_RadioButton.isSelected() == true) {
-            dt.setG15("0");
+            dt.vector("g15",0);
         }
 
         //gejala16
         if (g16_Ya_RadioButton.isSelected() == true) {
-            dt.setG16("1");
+            dt.vector("g16",1);
         }
         if (g16_Tidak_RadioButton.isSelected() == true) {
-            dt.setG16("0");
+            dt.vector("g16",0);
         }
 
         //gejala17
         if (g17_Ya_RadioButton.isSelected() == true) {
-            dt.setG17("1");
+            dt.vector("g17",1);
         }
         if (g17_Tidak_RadioButton.isSelected() == true) {
-            dt.setG17("0");
+            dt.vector("g17",0);
         }
 
         //gejala18
         if (g18_Ya_RadioButton.isSelected() == true) {
-            dt.setG18("1");
+            dt.vector("g18",1);
         }
         if (g18_Tidak_RadioButton.isSelected() == true) {
-            dt.setG18("0");
+            dt.vector("g18",0);
         }
 
         //gejala19
         if (g19_Ya_RadioButton.isSelected() == true) {
-            dt.setG19("1");
+            dt.vector("g19",1);
         }
         if (g19_Tidak_RadioButton.isSelected() == true) {
-            dt.setG19("0");
+            dt.vector("g19",0);
         }
 
         //gejala20
         if (g20_Ya_RadioButton.isSelected() == true) {
-            dt.setG20("1");
+            dt.vector("g20",1);
         }
         if (g20_Tidak_RadioButton.isSelected() == true) {
-            dt.setG20("0");
+            dt.vector("g20",0);
         }
 
         //gejala21
         if (g21_Ya_RadioButton.isSelected() == true) {
-            dt.setG21("1");
+            dt.vector("g21",1);
         }
         if (g21_Tidak_RadioButton.isSelected() == true) {
-            dt.setG21("0");
+            dt.vector("g21",0);
         }
 
         //target
-        if (penyakitComboBox.getSelectedItem() == "Glaukoma") {
-            dt.setTarget("1");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Katarak") {
-            dt.setTarget("2");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Konjungtivitis") {
-            dt.setTarget("3");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Keratitis") {
-            dt.setTarget("4");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Pterigium") {
-            dt.setTarget("5");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Uveitis") {
-            dt.setTarget("6");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Dry Eyes") {
-            dt.setTarget("7");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Bleparitis") {
-            dt.setTarget("8");
-        }
-        if (penyakitComboBox.getSelectedItem() == "Kalazion") {
-            dt.setTarget("9");
+        switch(penyakitComboBox.getSelectedItem().toString())
+        {
+            case "Glaukoma"             : dt.target = 1;break;
+            case "Katarak"              : dt.target = 2;break;
+            case "Konjungtivitis"       : dt.target = 3;break;
+            case "Keratitis"            : dt.target = 4;break;
+            case "Pterigium"            : dt.target = 5;break;
+            case "Uveitis"              : dt.target = 6;break;
+            case "Dry Eyes"             : dt.target = 7;break;
+            case "Bleparitis"           : dt.target = 8;break;
+            default                     : dt.target = 9;break;
         }
 
         int balasan = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin mengubah data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         if (balasan == JOptionPane.YES_OPTION) {
-            String status = this.dc.updateDataset(dt);
+             DatasetDao.insert(Settings.DB, dt);
             JOptionPane.showMessageDialog(null, "Data Berhasil Diubah");
             this.readTable();
         } else {
