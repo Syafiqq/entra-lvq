@@ -43,11 +43,11 @@ public abstract class LVQ<T>
                 final ProcessedWeightPojo<T> min = this.findMinimum(this.weight);
                 if(min.isSameSignature(data))
                 {
-                    min.moveToward(data);
+                    this.moveToward(data, min);
                 }
                 else
                 {
-                    min.moveAway(data);
+                    this.moveAway(data, min);
                 }
             }
             this.reduceLearningRate();
@@ -55,6 +55,10 @@ public abstract class LVQ<T>
             this.evaluateSatisfaction();
         }
     }
+
+    protected abstract void moveAway(ProcessedDatasetPojo data, ProcessedWeightPojo<T> min);
+
+    protected abstract void moveToward(ProcessedDatasetPojo data, ProcessedWeightPojo<T> min);
 
     protected abstract void calculateAccuracy();
 
