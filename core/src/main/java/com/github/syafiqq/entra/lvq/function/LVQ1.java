@@ -27,7 +27,6 @@ public class LVQ1 extends LVQ<Double>
     public final double lrThreshold;
     public final int maxIteration;
     public double learningRate;
-    public double accuracy = 0;
 
     public LVQ1(double learningRate, double lrReduction, double lrThreshold, int maxIteration)
     {
@@ -79,10 +78,10 @@ public class LVQ1 extends LVQ<Double>
         }
     }
 
-    @Override protected void calculateAccuracy()
+    @Override public void calculateAccuracy(List<ProcessedDatasetPojo> dataset)
     {
-        this.accuracy = this.dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count() * 1.0f / this.dataset.size() * 100.f;
-        System.out.printf("Iteration %d = %f\n", counter + 1, this.accuracy);
+        double accuracy = dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count() * 1.0f / dataset.size() * 100.f;
+        System.out.printf("Iteration %d = %f\n", counter + 1, accuracy);
     }
 
     @Override protected ProcessedWeightPojo<Double> findMinimum(List<ProcessedWeightPojo<Double>> weight)
