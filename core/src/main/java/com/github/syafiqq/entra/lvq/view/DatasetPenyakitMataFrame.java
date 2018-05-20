@@ -49,8 +49,8 @@ import javax.swing.table.DefaultTableModel;
         if (!list.isEmpty()) {
             Object[][] data = new Object[this.list.size()][23];
             int i = 0;
-            int c = -1;
             for (DatasetPojo dt : this.list) {
+                int c = -1;
                 data[i][++c] = dt.id;
                 for(String idx : Settings.columns)
                 {
