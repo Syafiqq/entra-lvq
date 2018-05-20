@@ -16,14 +16,14 @@ class LVQ1Test
     @Test
     fun `it_should_instantiate_object_successfully`()
     {
-        val lvq = LVQ1()
+        val lvq = LVQ1(0.05, 0.1, 1E-11, 5)
         Assert.assertNotNull(lvq)
     }
 
     @Test
     fun `it_should_have_non_empty_dataset_after_initialize`()
     {
-        val lvq = LVQ1()
+        val lvq = LVQ1(0.05, 0.1, 1E-11, 5)
         lvq.initialization()
         Assert.assertNotNull(lvq)
         Assert.assertTrue(lvq.dataset.size > 0)
@@ -33,7 +33,7 @@ class LVQ1Test
     @Test
     fun `it_should_have_non_empty_weight_after_initialize`()
     {
-        val lvq = LVQ1()
+        val lvq = LVQ1(0.05, 0.1, 1E-11, 5)
         lvq.initialization()
         Assert.assertNotNull(lvq)
         Assert.assertTrue(lvq.weight.size > 0)
@@ -43,7 +43,7 @@ class LVQ1Test
     @Test
     fun `it_should_run_lvq_smoothly`()
     {
-        val lvq = LVQ1()
+        val lvq = LVQ1(0.05, 0.1, 1E-11, 5)
         lvq.run()
         lvq.weight.forEach(System.out::println)
     }
