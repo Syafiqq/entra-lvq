@@ -55,12 +55,18 @@ public class LVQ1 extends LVQ<Double>
 
     @Override protected void moveAway(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> min)
     {
-        min.weight.vector.forEach((idx, val) -> min.weight.vector(idx, val - (this.learningRate * data.dataset.vector(idx)) + (this.learningRate * val)));
+        for(String idx : Settings.columns)
+        {
+            min.weight.vector.mergeDouble(idx, 0, (val, __) -> val - (this.learningRate * data.dataset.vector(idx)) + (this.learningRate * val));
+        }
     }
 
     @Override protected void moveToward(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> min)
     {
-        min.weight.vector.forEach((idx, val) -> min.weight.vector(idx, val + (this.learningRate * data.dataset.vector(idx)) - (this.learningRate * val)));
+        for(String idx : Settings.columns)
+        {
+            min.weight.vector.mergeDouble(idx, 0, (val, __) -> val + (this.learningRate * data.dataset.vector(idx)) - (this.learningRate * val));
+        }
     }
 
     @Override protected void calculateAccuracy()
