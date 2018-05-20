@@ -1,9 +1,7 @@
 package com.github.syafiqq.entra.lvq.database
 
-import com.github.syafiqq.entra.lvq.seeder.DatasetSeeder
-import com.github.syafiqq.entra.lvq.seeder.WeightSeeder
-import org.junit.BeforeClass
-import org.junit.Test
+import com.github.syafiqq.entra.lvq.database.seeder.DatasetSeeder
+import com.github.syafiqq.entra.lvq.database.seeder.WeightSeeder
 
 
 /*
@@ -17,39 +15,34 @@ class DatabaseGenerator: DatabaseDispatcher
 {
     companion object
     {
-        private lateinit var dispatcher: Array<DatabaseDispatcher>
-
-        @BeforeClass
-        @JvmStatic
-        fun initialize()
-        {
-            this.dispatcher = arrayOf(CreateDatasetTable(), CreateWeightTable())
-        }
+        private val dispatcher: Array<DatabaseDispatcher> = arrayOf(CreateDatasetTable(), CreateWeightTable())
     }
 
-
-    @Test override fun up()
+    override fun up()
     {
         dispatcher.forEach(DatabaseDispatcher::up)
     }
 
-    @Test override fun down()
+    override fun down()
     {
         dispatcher.forEach(DatabaseDispatcher::down)
     }
 
-    @Test
     fun refresh()
     {
         this.down()
         this.up()
     }
 
-    @Test
     fun refreshAndSeed()
     {
         this.refresh()
-        WeightSeeder().run(WeightSeeder::addInitial)
-        DatasetSeeder().run(DatasetSeeder::addInitial)
+        WeightSeeder().run(WeightSeeder::forDebugOnly)
+        DatasetSeeder().run(DatasetSeeder::forDebugOnly)
     }
+}
+
+fun main(args: Array<String>)
+{
+    DatabaseGenerator().run(DatabaseGenerator::refreshAndSeed)
 }
