@@ -49,7 +49,7 @@ public class LVQ1 extends LVQ<Double>
 
     @Override public boolean isSatisfied()
     {
-        return counter > 4 || this.learningRate < this.lrThreshold;
+        return counter > maxIteration || this.learningRate < this.lrThreshold;
     }
 
     @Override public void evaluateSatisfaction()
