@@ -53,6 +53,16 @@ public class LVQ1 extends LVQ<Double>
         this.learningRate -= (this.learningRate * this.lrReduction);
     }
 
+    @Override protected void moveAway(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> min)
+    {
+        min.weight.vector.forEach((idx, val) -> min.weight.vector(idx, val + (this.learningRate * data.dataset.vector(idx)) + (this.learningRate * val)));
+    }
+
+    @Override protected void moveToward(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> min)
+    {
+        min.weight.vector.forEach((idx, val) -> min.weight.vector(idx, val + (this.learningRate * data.dataset.vector(idx)) - (this.learningRate * val)));
+    }
+
     @Override protected void calculateAccuracy()
     {
         this.accuracy = this.dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count() / this.dataset.size() * 100;
