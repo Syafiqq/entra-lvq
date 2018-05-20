@@ -40,7 +40,7 @@ public class LVQ1 extends LVQ<Double>
 
     @Override public boolean isSatisfied()
     {
-        return counter > 5 || this.learningRate < this.lrThreshold;
+        return counter > 4 || this.learningRate < this.lrThreshold;
     }
 
     @Override public void evaluateSatisfaction()
@@ -55,7 +55,7 @@ public class LVQ1 extends LVQ<Double>
 
     @Override protected void moveAway(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> min)
     {
-        min.weight.vector.forEach((idx, val) -> min.weight.vector(idx, val + (this.learningRate * data.dataset.vector(idx)) + (this.learningRate * val)));
+        min.weight.vector.forEach((idx, val) -> min.weight.vector(idx, val - (this.learningRate * data.dataset.vector(idx)) + (this.learningRate * val)));
     }
 
     @Override protected void moveToward(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> min)
