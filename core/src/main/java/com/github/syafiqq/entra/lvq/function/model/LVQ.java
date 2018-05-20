@@ -51,7 +51,7 @@ public abstract class LVQ<T>
                 }
             }
             this.reduceLearningRate();
-            this.calculateAccuracy();
+            this.calculateAccuracy(this.dataset);
             this.evaluateSatisfaction();
         }
     }
@@ -60,7 +60,7 @@ public abstract class LVQ<T>
 
     protected abstract void moveCloser(ProcessedDatasetPojo data, ProcessedWeightPojo<T> min);
 
-    protected abstract void calculateAccuracy();
+    public abstract void calculateAccuracy(List<ProcessedDatasetPojo> dataset);
 
     protected abstract ProcessedWeightPojo<T> findMinimum(List<ProcessedWeightPojo<T>> weight);
 
