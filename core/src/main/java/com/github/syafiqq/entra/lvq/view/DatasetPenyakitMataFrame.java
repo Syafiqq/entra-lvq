@@ -14,7 +14,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;import org.jetbrains.annotations.NotNull;
+import javax.swing.table.DefaultTableModel;
+import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -47,7 +48,7 @@ import javax.swing.table.DefaultTableModel;import org.jetbrains.annotations.NotN
     public List<DatasetPojo> list = new ArrayList<>();
 
     public void readTable() {
-        list = DatasetDao.getAll(Settings.DB);
+        list = listener.getDataset();
         if (!list.isEmpty()) {
             Object[][] data = new Object[this.list.size()][23];
             int i = 0;
@@ -1006,6 +1007,7 @@ import javax.swing.table.DefaultTableModel;import org.jetbrains.annotations.NotN
         int balasan = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menambahkan data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         if (balasan == JOptionPane.YES_OPTION) {
             DatasetDao.insert(Settings.DB, dt);
+            listener.refreshDataset(DatasetDao.getAll(Settings.DB));
             JOptionPane.showMessageDialog(null, "Data Berhasil Ditambah");
             this.readTable();
         } else {
@@ -1022,6 +1024,7 @@ import javax.swing.table.DefaultTableModel;import org.jetbrains.annotations.NotN
         int balasan = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         if (balasan == JOptionPane.YES_OPTION) {
             DatasetDao.delete(Settings.DB, Integer.valueOf(no));
+            listener.refreshDataset(DatasetDao.getAll(Settings.DB));
             JOptionPane.showMessageDialog(null, "Data Berhasil Dihapus");
             this.readTable();
         } else {
@@ -1220,7 +1223,8 @@ import javax.swing.table.DefaultTableModel;import org.jetbrains.annotations.NotN
 
         int balasan = JOptionPane.showConfirmDialog(this, "Apakah Anda yakin ingin mengubah data ini?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
         if (balasan == JOptionPane.YES_OPTION) {
-             DatasetDao.insert(Settings.DB, dt);
+            DatasetDao.insert(Settings.DB, dt);
+            listener.refreshDataset(DatasetDao.getAll(Settings.DB));
             JOptionPane.showMessageDialog(null, "Data Berhasil Diubah");
             this.readTable();
         } else {
@@ -1237,7 +1241,8 @@ import javax.swing.table.DefaultTableModel;import org.jetbrains.annotations.NotN
 
     public interface InteractionListener
     {
-
+        List<DatasetPojo> getDataset();
+        void refreshDataset(List<DatasetPojo> all);
     }
 
 
