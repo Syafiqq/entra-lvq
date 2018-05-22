@@ -14,7 +14,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableModel;import org.jetbrains.annotations.NotNull;
 
 /**
  *
@@ -22,12 +22,14 @@ import javax.swing.table.DefaultTableModel;
  */
 @SuppressWarnings("PointlessBooleanExpression") public class DatasetPenyakitMataFrame extends javax.swing.JInternalFrame {
 
+    InteractionListener listener;
     int row;
 
     /**
      * Creates new form DatasetPenyakitMataFrame
      */
-    public DatasetPenyakitMataFrame() {
+    public DatasetPenyakitMataFrame(@NotNull InteractionListener listener) {
+        this.listener = listener;
         initComponents();
         readTable();
 
@@ -1231,6 +1233,12 @@ import javax.swing.table.DefaultTableModel;
     private void g20_Ya_RadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_g20_Ya_RadioButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_g20_Ya_RadioButtonActionPerformed
+
+
+    public interface InteractionListener
+    {
+
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
