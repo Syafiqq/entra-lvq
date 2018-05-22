@@ -6,8 +6,14 @@
  */
 package com.github.syafiqq.entra.lvq.view;
 
+import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
+import com.github.syafiqq.entra.lvq.function.model.EuclideanWeightPojo;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
 import com.github.syafiqq.entra.lvq.model.database.dao.DatasetDao;
+import com.github.syafiqq.entra.lvq.model.database.dao.WeightDao;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
+import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 import com.github.syafiqq.entra.lvq.observable.java.util.OList;
 import com.github.syafiqq.entra.lvq.util.Settings;
 import java.beans.PropertyVetoException;
@@ -15,6 +21,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.swing.JInternalFrame;
 
 /**
@@ -25,12 +32,20 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
 
     private JInternalFrame fDataset;
     private OList<DatasetPojo> dataset;
+    private OList<WeightPojo> weight;
+    private OList<ProcessedDatasetPojo> oDataset;
+    private OList<ProcessedWeightPojo<Double>> oWeight;
+    private DebuggableLVQ1 lvq;
 
     /**
      * Creates new form FormUtama
      */
     public FormUtama() {
         this.dataset = new OList<>(new LinkedList<>(DatasetDao.getAll(Settings.DB)));
+        this.weight = new OList<>(new LinkedList<>(WeightDao.getAll(Settings.DB)));
+        this.oDataset = new OList<>(new LinkedList<>(this.dataset.lists.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList())));
+        this.oWeight = new OList<>(new LinkedList<>(this.weight.lists.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList())));
+        this.lvq = new DebuggableLVQ1(0,0,0,0,this.oDataset.lists, this.oWeight.lists);
         initComponents();
         setExtendedState(MAXIMIZED_BOTH);
     }
