@@ -6,7 +6,13 @@
  */
 package com.github.syafiqq.entra.lvq.view;
 
+import com.github.syafiqq.entra.lvq.model.database.dao.DatasetDao;
+import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
+import com.github.syafiqq.entra.lvq.observable.java.util.OList;
+import com.github.syafiqq.entra.lvq.util.Settings;
 import java.beans.PropertyVetoException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JInternalFrame;
@@ -17,10 +23,14 @@ import javax.swing.JInternalFrame;
  */
 public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener {
 
-    private JInternalFrame dataset; /**
+    private JInternalFrame fDataset;
+    private OList<DatasetPojo> dataset;
+
+    /**
      * Creates new form FormUtama
      */
     public FormUtama() {
+        this.dataset = new OList<>(new LinkedList<>(DatasetDao.getAll(Settings.DB)));
         initComponents();
         setExtendedState(MAXIMIZED_BOTH);
     }
@@ -202,13 +212,13 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     private void datasetMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_datasetMenuActionPerformed
         // TODO add your handling code here:
         try {
-            if(this.dataset == null)
+            if(this.fDataset == null)
             {
-                this.dataset = new DatasetPenyakitMataFrame(this);
-                this.jDesktopPane1.add(dataset);
-                this.dataset.setMaximum(true);
+                this.fDataset = new DatasetPenyakitMataFrame(this);
+                this.jDesktopPane1.add(fDataset);
+                this.fDataset.setMaximum(true);
             }
-            this.dataset.show();
+            this.fDataset.show();
         } catch (PropertyVetoException ex) {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -333,6 +343,16 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_testdataMenuActionPerformed
+
+    @Override public List<DatasetPojo> getDataset()
+    {
+        return this.dataset.lists;
+    }
+
+    @Override public void refreshDataset(List<DatasetPojo> all)
+    {
+        this.dataset.refresh(all);
+    }
 
     /**
      * @param args the command line arguments
