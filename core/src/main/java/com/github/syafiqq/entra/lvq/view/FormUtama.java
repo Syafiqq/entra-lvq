@@ -15,7 +15,7 @@ import javax.swing.JInternalFrame;
  *
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame {
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener {
 
     private JInternalFrame dataset; /**
      * Creates new form FormUtama
@@ -204,7 +204,7 @@ public class FormUtama extends javax.swing.JFrame {
         try {
             if(this.dataset == null)
             {
-                this.dataset = new DatasetPenyakitMataFrame();
+                this.dataset = new DatasetPenyakitMataFrame(this);
                 this.jDesktopPane1.add(dataset);
                 this.dataset.setMaximum(true);
             }
