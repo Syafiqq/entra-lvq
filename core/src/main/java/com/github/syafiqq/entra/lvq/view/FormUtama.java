@@ -9,7 +9,7 @@ package com.github.syafiqq.entra.lvq.view;
 import java.beans.PropertyVetoException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.plaf.DesktopPaneUI;
+import javax.swing.JInternalFrame;
 
 /**
  *
@@ -17,7 +17,7 @@ import javax.swing.plaf.DesktopPaneUI;
  */
 public class FormUtama extends javax.swing.JFrame {
 
-    /**
+    private JInternalFrame dataset; /**
      * Creates new form FormUtama
      */
     public FormUtama() {
@@ -202,10 +202,13 @@ public class FormUtama extends javax.swing.JFrame {
     private void datasetMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_datasetMenuActionPerformed
         // TODO add your handling code here:
         try {
-            DatasetPenyakitMataFrame dataset = new DatasetPenyakitMataFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
+            if(this.dataset == null)
+            {
+                this.dataset = new DatasetPenyakitMataFrame();
+                this.jDesktopPane1.add(dataset);
+                this.dataset.setMaximum(true);
+            }
+            this.dataset.show();
         } catch (PropertyVetoException ex) {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
