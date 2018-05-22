@@ -17,6 +17,7 @@ import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 import com.github.syafiqq.entra.lvq.observable.java.util.OList;
 import com.github.syafiqq.entra.lvq.util.Settings;
 import java.beans.PropertyVetoException;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -233,6 +234,8 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
                 this.jDesktopPane1.add(fDataset);
                 this.fDataset.setMaximum(true);
             }
+            Arrays.stream(this.jDesktopPane1.getAllFrames()).forEach(JInternalFrame::toBack);
+            this.fDataset.toFront();
             this.fDataset.show();
         } catch (PropertyVetoException ex) {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
