@@ -24,6 +24,14 @@ public class DebuggableLVQ1 extends LVQ1
         this.pWeight = new LinkedList<>();
     }
 
+    public void setSetting(double learningRate, double lrReduction, double lrThreshold, int maxIteration)
+    {
+        super.learningRate = learningRate;
+        super.lrReduction = lrReduction;
+        super.lrThreshold = lrThreshold;
+        super.maxIteration = maxIteration - 1;
+    }
+
     public void setData(List<ProcessedDatasetPojo> dataset, List<ProcessedWeightPojo<Double>> weight)
     {
         this.pDataset.clear();
