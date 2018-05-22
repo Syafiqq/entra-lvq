@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 public class LVQ1 extends LVQ<Double>
 {
     public int counter = 0;
-    public final double lrReduction;
-    public final double lrThreshold;
-    public final int maxIteration;
+    public double lrReduction;
+    public double lrThreshold;
+    public int maxIteration;
     public double learningRate;
 
     public LVQ1(double learningRate, double lrReduction, double lrThreshold, int maxIteration)
