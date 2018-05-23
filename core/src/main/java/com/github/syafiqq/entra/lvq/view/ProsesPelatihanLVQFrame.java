@@ -46,6 +46,10 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         this.decalphaTextField.setText(String.format("%f", lvq.lrReduction));
         this.minalphaTextField.setText(String.format("%f", lvq.lrThreshold));
         this.maxepohTextField.setText(String.format("%d", lvq.maxIteration));
+        DefaultTableModel ood = (DefaultTableModel) this.datalatihTable.getModel();
+
+        
+
     }
 
     /**
