@@ -8,6 +8,8 @@ package com.github.syafiqq.entra.lvq.view;
 import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import java.util.List;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  * @author Entra
@@ -24,7 +26,18 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     {
         this.listener = listener;
         initComponents();
+        this.initTable();
         this.initializeLVQ(this.listener.getLVQ());
+    }
+
+    private void initTable()
+    {
+        this.datalatihTable.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target"}));
+        this.datalatihTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.jScrollPane2.setViewportView(this.datalatihTable);
+        this.bobotawalTable.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target"}));
+        this.bobotawalTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.jScrollPane1.setViewportView(this.bobotawalTable);
     }
 
     private void initializeLVQ(DebuggableLVQ1 lvq)
