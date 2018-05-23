@@ -31,7 +31,7 @@ import javax.swing.JInternalFrame;
  */
 public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener {
 
-    private JInternalFrame fDataset;
+    private ClosableInternalFrame fDataset;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -233,6 +233,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
                 this.fDataset = new DatasetPenyakitMataFrame(this);
                 this.jDesktopPane1.add(fDataset);
                 this.fDataset.setMaximum(true);
+                this.fDataset.addInternalFrameListener(e -> this.fDataset = null);
             }
             Arrays.stream(this.jDesktopPane1.getAllFrames()).forEach(JInternalFrame::toBack);
             this.fDataset.toFront();
