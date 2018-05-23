@@ -1,4 +1,3 @@
-// @formatter:off
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -26,12 +25,13 @@ import java.util.stream.Collectors;
 import javax.swing.JInternalFrame;
 
 /**
- *
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener {
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener
+{
 
     private ClosableInternalFrame fDataset;
+    private ClosableInternalFrame fTraining;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -41,14 +41,64 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     /**
      * Creates new form FormUtama
      */
-    public FormUtama() {
+    public FormUtama()
+    {
         this.dataset = new OList<>(new LinkedList<>(DatasetDao.getAll(Settings.DB)));
         this.weight = new OList<>(new LinkedList<>(WeightDao.getAll(Settings.DB)));
         this.oDataset = new OList<>(new LinkedList<>(this.dataset.lists.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList())));
         this.oWeight = new OList<>(new LinkedList<>(this.weight.lists.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList())));
-        this.lvq = new DebuggableLVQ1(0,0,0,0,this.oDataset.lists, this.oWeight.lists);
+        this.lvq = new DebuggableLVQ1(0, 0, 0, 0, this.oDataset.lists, this.oWeight.lists);
         initComponents();
         setExtendedState(MAXIMIZED_BOTH);
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[])
+    {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+         */
+        try
+        {
+            for(javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels())
+            {
+                if("Nimbus".equals(info.getName()))
+                {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        }
+        catch(ClassNotFoundException ex)
+        {
+            java.util.logging.Logger.getLogger(FormUtama.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch(InstantiationException ex)
+        {
+            java.util.logging.Logger.getLogger(FormUtama.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch(IllegalAccessException ex)
+        {
+            java.util.logging.Logger.getLogger(FormUtama.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        catch(javax.swing.UnsupportedLookAndFeelException ex)
+        {
+            java.util.logging.Logger.getLogger(FormUtama.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable()
+        {
+            public void run()
+            {
+                new FormUtama().setVisible(true);
+            }
+        });
     }
 
     /**
@@ -58,7 +108,8 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
+    private void initComponents()
+    {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -84,19 +135,21 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 586, Short.MAX_VALUE)
+                jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                   .addGap(0, 586, Short.MAX_VALUE)
         );
         jDesktopPane1Layout.setVerticalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 348, Short.MAX_VALUE)
+                jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                   .addGap(0, 348, Short.MAX_VALUE)
         );
 
         fileMenu.setText("File");
 
         exitMenu.setText("Exit");
-        exitMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        exitMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 exitMenuActionPerformed(evt);
             }
         });
@@ -107,24 +160,30 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         lvqMenu.setText("Menu LVQ");
 
         datasetMenu.setText("Dataset Penyakit Mata");
-        datasetMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        datasetMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 datasetMenuActionPerformed(evt);
             }
         });
         lvqMenu.add(datasetMenu);
 
         trainingMenu.setText("Proses Pelatihan LVQ");
-        trainingMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        trainingMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 trainingMenuActionPerformed(evt);
             }
         });
         lvqMenu.add(trainingMenu);
 
         testingMenu.setText("Proses Pengujian LVQ");
-        testingMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        testingMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 testingMenuActionPerformed(evt);
             }
         });
@@ -135,24 +194,30 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         viewMenu.setText("View");
 
         jaraktrainingMenu.setText("Proses Perhitungan Jarak Data Latih (Training)");
-        jaraktrainingMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jaraktrainingMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jaraktrainingMenuActionPerformed(evt);
             }
         });
         viewMenu.add(jaraktrainingMenu);
 
         bobottrainingMenu.setText("Proses Perhitungan Bobot Data Latih (Training)");
-        bobottrainingMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        bobottrainingMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 bobottrainingMenuActionPerformed(evt);
             }
         });
         viewMenu.add(bobottrainingMenu);
 
         jaraktestingMenu.setText("Proses Perhitungan Jarak Data Uji (Testing)");
-        jaraktestingMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jaraktestingMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 jaraktestingMenuActionPerformed(evt);
             }
         });
@@ -163,40 +228,50 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         testMenu.setText("Test Parameters");
 
         testalphaMenu.setText("Pengujian Learning Rate (α)");
-        testalphaMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        testalphaMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 testalphaMenuActionPerformed(evt);
             }
         });
         testMenu.add(testalphaMenu);
 
         testdecalphaMenu.setText("Pengujian Pengurangan Learning Rate (Dec α)");
-        testdecalphaMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        testdecalphaMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 testdecalphaMenuActionPerformed(evt);
             }
         });
         testMenu.add(testdecalphaMenu);
 
         testminalphaMenu.setText("Pengujian Minimal Learning Rate (Min α)");
-        testminalphaMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        testminalphaMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 testminalphaMenuActionPerformed(evt);
             }
         });
         testMenu.add(testminalphaMenu);
 
         testmaxepohMenu.setText("Pengujian Iterasi Maksimum (MaxEpoh)");
-        testmaxepohMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        testmaxepohMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 testmaxepohMenuActionPerformed(evt);
             }
         });
         testMenu.add(testmaxepohMenu);
 
         testdataMenu.setText("Perbandingan Data Latih : Data Uji");
-        testdataMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        testdataMenu.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
                 testdataMenuActionPerformed(evt);
             }
         });
@@ -209,25 +284,28 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                      .addComponent(jDesktopPane1)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1)
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                      .addComponent(jDesktopPane1)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void exitMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuActionPerformed
+    private void exitMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_exitMenuActionPerformed
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_exitMenuActionPerformed
 
-    private void datasetMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_datasetMenuActionPerformed
+    private void datasetMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_datasetMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             if(this.fDataset == null)
             {
                 this.fDataset = new DatasetPenyakitMataFrame(this);
@@ -235,130 +313,174 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
                 this.fDataset.setMaximum(true);
                 this.fDataset.addInternalFrameListener(e -> this.fDataset = null);
             }
-            Arrays.stream(this.jDesktopPane1.getAllFrames()).forEach(JInternalFrame::toBack);
-            this.fDataset.toFront();
-            this.fDataset.show();
-        } catch (PropertyVetoException ex) {
+            setTopAndActivate(this.fDataset);
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_datasetMenuActionPerformed
 
-    private void trainingMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_trainingMenuActionPerformed
+    private void trainingMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_trainingMenuActionPerformed
         // TODO add your handling code here:
-        try {
-            ProsesPelatihanLVQFrame dataset = new ProsesPelatihanLVQFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
-        } catch (PropertyVetoException ex) {
+        try
+        {
+            if(this.fTraining == null)
+            {
+                this.fTraining = new ProsesPelatihanLVQFrame(this);
+                this.jDesktopPane1.add(fTraining);
+                this.fTraining.setMaximum(true);
+                this.fTraining.addInternalFrameListener(e -> this.fTraining = null);
+            }
+            setTopAndActivate(this.fTraining);
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_trainingMenuActionPerformed
 
-    private void testingMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testingMenuActionPerformed
+    private void testingMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_testingMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             ProsesPengujianLVQFrame dataset = new ProsesPengujianLVQFrame();
             jDesktopPane1.add(dataset);
             dataset.setMaximum(true);
             dataset.show();
-        } catch (PropertyVetoException ex) {
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_testingMenuActionPerformed
 
-    private void jaraktrainingMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jaraktrainingMenuActionPerformed
+    private void jaraktrainingMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_jaraktrainingMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             JarakTrainingFrame dataset = new JarakTrainingFrame();
             jDesktopPane1.add(dataset);
             dataset.setMaximum(true);
             dataset.show();
-        } catch (PropertyVetoException ex) {
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jaraktrainingMenuActionPerformed
 
-    private void bobottrainingMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bobottrainingMenuActionPerformed
+    private void bobottrainingMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_bobottrainingMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             BobotTrainingFrame dataset = new BobotTrainingFrame();
             jDesktopPane1.add(dataset);
             dataset.setMaximum(true);
             dataset.show();
-        } catch (PropertyVetoException ex) {
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_bobottrainingMenuActionPerformed
 
-    private void jaraktestingMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jaraktestingMenuActionPerformed
+    private void jaraktestingMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_jaraktestingMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             JarakTestingFrame dataset = new JarakTestingFrame();
             jDesktopPane1.add(dataset);
             dataset.setMaximum(true);
             dataset.show();
-        } catch (PropertyVetoException ex) {
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jaraktestingMenuActionPerformed
 
-    private void testalphaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testalphaMenuActionPerformed
+    private void testalphaMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_testalphaMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             PengujianAlphaFrame dataset = new PengujianAlphaFrame();
             jDesktopPane1.add(dataset);
             dataset.setMaximum(true);
             dataset.show();
-        } catch (PropertyVetoException ex) {
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_testalphaMenuActionPerformed
 
-    private void testdecalphaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testdecalphaMenuActionPerformed
+    private void testdecalphaMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_testdecalphaMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             PengujianDecAlphaFrame dataset = new PengujianDecAlphaFrame();
             jDesktopPane1.add(dataset);
             dataset.setMaximum(true);
             dataset.show();
-        } catch (PropertyVetoException ex) {
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_testdecalphaMenuActionPerformed
 
-    private void testminalphaMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testminalphaMenuActionPerformed
+    private void testminalphaMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_testminalphaMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             PengujianMinAlphaFrame dataset = new PengujianMinAlphaFrame();
             jDesktopPane1.add(dataset);
             dataset.setMaximum(true);
             dataset.show();
-        } catch (PropertyVetoException ex) {
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_testminalphaMenuActionPerformed
 
-    private void testmaxepohMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testmaxepohMenuActionPerformed
+    private void testmaxepohMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_testmaxepohMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             PengujianIterasiMaxFrame dataset = new PengujianIterasiMaxFrame();
             jDesktopPane1.add(dataset);
             dataset.setMaximum(true);
             dataset.show();
-        } catch (PropertyVetoException ex) {
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_testmaxepohMenuActionPerformed
 
-    private void testdataMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testdataMenuActionPerformed
+    private void testdataMenuActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_testdataMenuActionPerformed
         // TODO add your handling code here:
-        try {
+        try
+        {
             PengujianDatasetFrame dataset = new PengujianDatasetFrame();
             jDesktopPane1.add(dataset);
             dataset.setMaximum(true);
             dataset.show();
-        } catch (PropertyVetoException ex) {
+        }
+        catch(PropertyVetoException ex)
+        {
             Logger.getLogger(FormUtama.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_testdataMenuActionPerformed
@@ -373,39 +495,13 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         this.dataset.refresh(all);
     }
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FormUtama.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FormUtama.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FormUtama.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FormUtama.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FormUtama().setVisible(true);
-            }
-        });
+    private void setTopAndActivate(JInternalFrame frame) throws PropertyVetoException
+    {
+        Arrays.stream(this.jDesktopPane1.getAllFrames()).filter(t -> t != frame).forEach(JInternalFrame::toBack);
+        frame.toFront();
+        frame.show();
+        frame.requestFocus();
+        frame.setSelected(true);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
