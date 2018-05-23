@@ -495,6 +495,11 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         this.dataset.refresh(all);
     }
 
+    @Override public DebuggableLVQ1 getLVQ()
+    {
+        return this.lvq;
+    }
+
     private void setTopAndActivate(JInternalFrame frame) throws PropertyVetoException
     {
         Arrays.stream(this.jDesktopPane1.getAllFrames()).filter(t -> t != frame).forEach(JInternalFrame::toBack);
