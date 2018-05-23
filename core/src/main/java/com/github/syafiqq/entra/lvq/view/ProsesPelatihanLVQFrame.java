@@ -5,6 +5,7 @@
  */
 package com.github.syafiqq.entra.lvq.view;
 
+import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import java.util.List;
 
@@ -23,6 +24,15 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     {
         this.listener = listener;
         initComponents();
+        this.initializeLVQ(this.listener.getLVQ());
+    }
+
+    private void initializeLVQ(DebuggableLVQ1 lvq)
+    {
+        this.alphaTextField.setText(String.format("%f", lvq.learningRate));
+        this.decalphaTextField.setText(String.format("%f", lvq.lrReduction));
+        this.minalphaTextField.setText(String.format("%f", lvq.lrThreshold));
+        this.maxepohTextField.setText(String.format("%d", lvq.maxIteration));
     }
 
     /**
@@ -391,6 +401,8 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         List<DatasetPojo> getDataset();
 
         void refreshDataset(List<DatasetPojo> all);
+
+        DebuggableLVQ1 getLVQ();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
