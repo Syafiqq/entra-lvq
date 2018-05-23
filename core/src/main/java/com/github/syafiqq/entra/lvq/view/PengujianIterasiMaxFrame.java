@@ -10,7 +10,7 @@ package com.github.syafiqq.entra.lvq.view;
  *
  * @author Entra
  */
-public class PengujianIterasiMaxFrame extends javax.swing.JInternalFrame {
+public class PengujianIterasiMaxFrame extends ClosableInternalFrame {
 
     /**
      * Creates new form PengujianIterasiMaxFrame

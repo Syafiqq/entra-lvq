@@ -10,7 +10,7 @@ package com.github.syafiqq.entra.lvq.view;
  *
  * @author Entra
  */
-public class ProsesPelatihanLVQFrame extends javax.swing.JInternalFrame {
+public class ProsesPelatihanLVQFrame extends ClosableInternalFrame {
 
     /**
      * Creates new form ProsesPelatihanLVQFrame

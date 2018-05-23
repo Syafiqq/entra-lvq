@@ -10,7 +10,7 @@ package com.github.syafiqq.entra.lvq.view;
  *
  * @author Entra
  */
-public class JarakTrainingFrame extends javax.swing.JInternalFrame {
+public class JarakTrainingFrame extends ClosableInternalFrame {
 
     /**
      * Creates new form JarakTrainingFrame

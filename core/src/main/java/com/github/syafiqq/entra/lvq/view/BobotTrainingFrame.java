@@ -10,7 +10,7 @@ package com.github.syafiqq.entra.lvq.view;
  *
  * @author Entra
  */
-public class BobotTrainingFrame extends javax.swing.JInternalFrame {
+public class BobotTrainingFrame extends ClosableInternalFrame {
 
     /**
      * Creates new form BobotTrainingFrame

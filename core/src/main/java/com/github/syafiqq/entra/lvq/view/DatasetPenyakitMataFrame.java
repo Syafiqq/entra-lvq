@@ -12,6 +12,8 @@ import com.github.syafiqq.entra.lvq.util.Settings;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.event.InternalFrameListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
@@ -21,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Entra
  */
-@SuppressWarnings("PointlessBooleanExpression") public class DatasetPenyakitMataFrame extends javax.swing.JInternalFrame {
+@SuppressWarnings("PointlessBooleanExpression") public class DatasetPenyakitMataFrame extends ClosableInternalFrame {
 
     InteractionListener listener;
     int row;

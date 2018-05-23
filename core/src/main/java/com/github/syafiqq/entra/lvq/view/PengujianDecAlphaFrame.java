@@ -10,7 +10,7 @@ package com.github.syafiqq.entra.lvq.view;
  *
  * @author Entra
  */
-public class PengujianDecAlphaFrame extends javax.swing.JInternalFrame {
+public class PengujianDecAlphaFrame extends ClosableInternalFrame {
 
     /**
      * Creates new form PengujianDecAlphaFrame
