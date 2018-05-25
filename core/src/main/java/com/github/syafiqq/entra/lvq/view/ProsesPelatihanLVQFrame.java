@@ -42,7 +42,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
 
     private void initTable()
     {
-        this.datalatihTable.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target"}));
+        this.datalatihTable.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target", "Aktual-Target"}));
         this.datalatihTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.jScrollPane2.setViewportView(this.datalatihTable);
         this.bobotawalTable.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target"}));
@@ -518,11 +518,11 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             }
             selectedWeight.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id)));
         }
-        
+
         final DefaultTableModel datasetTable = (DefaultTableModel) this.datalatihTable.getModel();
         datasetTable.setRowCount(0);
         selectedDataset.forEach(dt -> {
-            Object[] data = new Object[23];
+            Object[] data = new Object[24];
             int i = 0;
             int c = -1;
             data[++c] = dt.id;
@@ -531,6 +531,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 data[++c] = dt.vector(idx);
             }
             data[++c] = dt.target;
+            data[++c] = "-";
             ++i;
             datasetTable.addRow(data);
         });
