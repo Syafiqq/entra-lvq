@@ -7,7 +7,10 @@ package com.github.syafiqq.entra.lvq.view;
 
 import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
+import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -444,9 +447,31 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         }
         else
         {
-
+            this.doProses(train, decLR, minLR, epoch, buttonGroup1.getSelection() == RadioButton_urut, buttonGroup2.getSelection() == RadioButton_disesuaikan);
         }
     }//GEN-LAST:event_prosesButtonActionPerformed
+
+    private void doProses(int train, double decLR, double minLR, int epoch, boolean urut, boolean disesuaikan)
+    {
+        final List<DatasetPojo> dataset = this.listener.getDataset();
+        if(!urut)
+        {
+            Collections.shuffle(dataset);
+        }
+        if(!disesuaikan)
+        {
+            Collections.shuffle(dataset);
+        }
+
+        final List<DatasetPojo> selectedDataset = dataset.stream().limit((long) (dataset.size() * train / 100.0)).collect(Collectors.toList());
+        final List<WeightPojo> selectedWeight = disesuaikan ? this.listener.getWeight() : dataset.stream().limit(9).map(d -> {
+            WeightPojo w = new WeightPojo();
+            w.id = d.id;
+            w.target = d.target;
+            d.vector.forEach(w.vector::put);
+            return w;
+        }).collect(Collectors.toList());
+    }
 
 
     public interface InteractionListener
@@ -456,6 +481,8 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         void refreshDataset(List<DatasetPojo> all);
 
         DebuggableLVQ1 getLVQ();
+
+        List<WeightPojo> getWeight();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
