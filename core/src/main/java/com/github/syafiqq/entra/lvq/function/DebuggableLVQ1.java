@@ -17,6 +17,8 @@ public class DebuggableLVQ1 extends LVQ1
     private final List<ProcessedDatasetPojo> pDataset;
     private final List<ProcessedWeightPojo<Double>> pWeight;
 
+    public final List<OnPostInitializationListener> postInitializeListener = new LinkedList<>();
+
     public DebuggableLVQ1(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedDatasetPojo> dataset, List<ProcessedWeightPojo<Double>> weight)
     {
         super(learningRate, lrReduction, lrThreshold, maxIteration);
@@ -42,10 +44,15 @@ public class DebuggableLVQ1 extends LVQ1
 
     @Override public void initialization()
     {
-        super.initialization();
         super.dataset.clear();
         super.weight.clear();
         super.dataset.addAll(this.pDataset);
         super.weight.addAll(this.pWeight);
+        this.postInitializeListener.forEach(l -> l.postInitialization(super.learningRate, super.lrReduction, super.lrThreshold, super.maxIteration, super.weight, super.dataset));
+    }
+
+    interface OnPostInitializationListener
+    {
+        void postInitialization(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedWeightPojo<Double>> dataset, List<ProcessedDatasetPojo> weight);
     }
 }
