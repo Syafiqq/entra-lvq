@@ -8,6 +8,7 @@ package com.github.syafiqq.entra.lvq.view;
 import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
@@ -373,6 +374,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         double learningRate = 0;
         double decLR = 0;
         double minLR = 0;
+        int epoch = 0;
         try
         {
             train = Integer.parseInt(this.datalatihTextField.getText());
@@ -401,11 +403,49 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         catch(NumberFormatException ignored)
         {
         }
+        try
+        {
+            epoch = Integer.parseInt(this.maxepohTextField.getText());
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
 
 
         train = (int) (train / 100.0 * this.listener.getDataset().size());
 
+        if(train <= 0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Data Latih tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(learningRate <= 0.0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Learning Rate tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(decLR <= 0.0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Learning Reduction tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(minLR <= 0.0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Learning Rate Treshold tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(epoch <= 0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Epoch tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(buttonGroup1.getSelection() == null)
+        {
+            JOptionPane.showMessageDialog(this, "Tipe Dataset Harus dipilih", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(buttonGroup2.getSelection() == null)
+        {
+            JOptionPane.showMessageDialog(this, "Tipe Bobot Harus dipilih", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else
+        {
 
+        }
     }//GEN-LAST:event_prosesButtonActionPerformed
 
 
