@@ -500,6 +500,11 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         return this.lvq;
     }
 
+    @Override public List<WeightPojo> getWeight()
+    {
+        return this.weight.lists;
+    }
+
     private void setTopAndActivate(JInternalFrame frame) throws PropertyVetoException
     {
         Arrays.stream(this.jDesktopPane1.getAllFrames()).filter(t -> t != frame).forEach(JInternalFrame::toBack);
