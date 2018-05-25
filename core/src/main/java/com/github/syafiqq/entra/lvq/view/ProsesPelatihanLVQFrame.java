@@ -8,6 +8,7 @@ package com.github.syafiqq.entra.lvq.view;
 import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
+import com.github.syafiqq.entra.lvq.util.Settings;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -417,9 +418,9 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
 
         train = (int) (train / 100.0 * this.listener.getDataset().size());
 
-        if(train <= 0)
+        if(train <= 9)
         {
-            JOptionPane.showMessageDialog(this, "Field Data Latih tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+            JOptionPane.showMessageDialog(this, "Field Data Latih tidak Valid atau kurang besar", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
         }
         else if(learningRate <= 0.0)
         {
@@ -463,7 +464,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             Collections.shuffle(dataset);
         }
 
-        final List<DatasetPojo> selectedDataset = dataset.stream().limit((long) (dataset.size() * train / 100.0)).collect(Collectors.toList());
+        final List<DatasetPojo> selectedDataset = dataset.stream().limit((long) (train)).collect(Collectors.toList());
         final List<WeightPojo> selectedWeight = disesuaikan ? this.listener.getWeight() : dataset.stream().limit(9).map(d -> {
             WeightPojo w = new WeightPojo();
             w.id = d.id;
@@ -471,6 +472,23 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             d.vector.forEach(w.vector::put);
             return w;
         }).collect(Collectors.toList());
+
+        final DefaultTableModel datasetTable = (DefaultTableModel) this.datalatihTable.getModel();
+        datasetTable.setRowCount(0);
+        selectedDataset.forEach(dt -> {
+            Object[] data = new Object[23];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.target;
+            ++i;
+            datasetTable.addRow(data);
+        });
+        datasetTable.fireTableDataChanged();
     }
 
 
