@@ -459,6 +459,8 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     {
         final List<DatasetPojo> dataset = this.listener.getDataset();
         final Map<Integer, List<DatasetPojo>> groupedDataset = dataset.stream().collect(Collectors.groupingBy(DatasetPojo::getTarget));
+
+        // Generating Dataset
         if(urut)
         {
             groupedDataset.values().forEach(d -> d.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id))));
@@ -481,19 +483,40 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             }
         }
         selectedDataset.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id)));
- 
+
+        //Generating Weight
+        final List<WeightPojo> weight = this.listener.getWeight();
+        final Map<Integer, List<WeightPojo>> groupedWeight = weight.stream().collect(Collectors.groupingBy(WeightPojo::getTarget));
         if(!disesuaikan)
         {
-            Collections.shuffle(dataset);
+            groupedDataset.values().forEach(Collections::shuffle);
         }
-        final List<WeightPojo> selectedWeight = disesuaikan ? this.listener.getWeight() : dataset.stream().limit(9).map(d -> {
-            WeightPojo w = new WeightPojo();
-            w.id = d.id;
-            w.target = d.target;
-            d.vector.forEach(w.vector::put);
-            return w;
-        }).collect(Collectors.toList());
-
+        final List<WeightPojo> selectedWeight = new LinkedList<>();
+        if(disesuaikan)
+        {
+            selectedWeight.addAll(weight);
+        }
+        else
+        {
+            train = 9;
+            while(train > 0)
+            {
+                for(List<DatasetPojo> l : groupedDataset.values())
+                {
+                    if(--train >= 0)
+                    {
+                        final DatasetPojo selection = l.get(0);
+                        WeightPojo w = new WeightPojo();
+                        w.id = selection.id;
+                        w.target = selection.target;
+                        selection.vector.forEach(w.vector::put);
+                        selectedWeight.add(w);
+                    }
+                }
+            }
+            selectedWeight.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id)));
+        }
+        
         final DefaultTableModel datasetTable = (DefaultTableModel) this.datalatihTable.getModel();
         datasetTable.setRowCount(0);
         selectedDataset.forEach(dt -> {
@@ -509,7 +532,22 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             ++i;
             datasetTable.addRow(data);
         });
-        datasetTable.fireTableDataChanged();
+        final DefaultTableModel weightTable = (DefaultTableModel) this.bobotawalTable.getModel();
+        weightTable.setRowCount(0);
+        selectedWeight.forEach(dt -> {
+            Object[] data = new Object[23];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.target;
+            ++i;
+            weightTable.addRow(data);
+        });
+        weightTable.fireTableDataChanged();
     }
 
 
