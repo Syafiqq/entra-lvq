@@ -60,4 +60,9 @@ public class WeightPojo
                 this.vector.getOrDefault("g21", 0.0),
                 this.target);
     }
+
+    public int getTarget()
+    {
+        return this.target;
+    }
 }
