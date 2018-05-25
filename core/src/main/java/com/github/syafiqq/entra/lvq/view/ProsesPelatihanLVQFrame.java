@@ -10,7 +10,10 @@ import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 import com.github.syafiqq.entra.lvq.util.Settings;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -49,7 +52,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     {
         this.alphaTextField.setText(String.format("%f", lvq.learningRate));
         this.decalphaTextField.setText(String.format("%f", lvq.lrReduction));
-        this.minalphaTextField.setText(String.format("%f", lvq.lrThreshold));
+        this.minalphaTextField.setText(String.format("%g", lvq.lrThreshold));
         this.maxepohTextField.setText(String.format("%d", lvq.maxIteration));
     }
 
@@ -448,23 +451,41 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         }
         else
         {
-            this.doProses(train, decLR, minLR, epoch, buttonGroup1.getSelection() == RadioButton_urut, buttonGroup2.getSelection() == RadioButton_disesuaikan);
+            this.doProses(train, decLR, minLR, epoch, RadioButton_urut.isSelected(), RadioButton_disesuaikan.isSelected());
         }
     }//GEN-LAST:event_prosesButtonActionPerformed
 
     private void doProses(int train, double decLR, double minLR, int epoch, boolean urut, boolean disesuaikan)
     {
         final List<DatasetPojo> dataset = this.listener.getDataset();
-        if(!urut)
+        final Map<Integer, List<DatasetPojo>> groupedDataset = dataset.stream().collect(Collectors.groupingBy(DatasetPojo::getTarget));
+        if(urut)
         {
-            Collections.shuffle(dataset);
+            groupedDataset.values().forEach(d -> d.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id))));
         }
+        else
+        {
+            groupedDataset.values().forEach(Collections::shuffle);
+        }
+        final List<DatasetPojo> selectedDataset = new LinkedList<>();
+        int base = -1;
+        while(train > 0)
+        {
+            ++base;
+            for(List<DatasetPojo> l : groupedDataset.values())
+            {
+                if(--train >= 0)
+                {
+                    selectedDataset.add(l.get(base));
+                }
+            }
+        }
+        selectedDataset.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id)));
+ 
         if(!disesuaikan)
         {
             Collections.shuffle(dataset);
         }
-
-        final List<DatasetPojo> selectedDataset = dataset.stream().limit((long) (train)).collect(Collectors.toList());
         final List<WeightPojo> selectedWeight = disesuaikan ? this.listener.getWeight() : dataset.stream().limit(9).map(d -> {
             WeightPojo w = new WeightPojo();
             w.id = d.id;
