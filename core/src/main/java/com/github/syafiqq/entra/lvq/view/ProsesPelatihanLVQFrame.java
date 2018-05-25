@@ -6,6 +6,8 @@
 package com.github.syafiqq.entra.lvq.view;
 
 import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
+import com.github.syafiqq.entra.lvq.function.model.EuclideanWeightPojo;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 import com.github.syafiqq.entra.lvq.util.Settings;
@@ -451,11 +453,11 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         }
         else
         {
-            this.doProses(train, decLR, minLR, epoch, RadioButton_urut.isSelected(), RadioButton_disesuaikan.isSelected());
+            this.doProses(train, learningRate, decLR, minLR, epoch, RadioButton_urut.isSelected(), RadioButton_disesuaikan.isSelected());
         }
     }//GEN-LAST:event_prosesButtonActionPerformed
 
-    private void doProses(int train, double decLR, double minLR, int epoch, boolean urut, boolean disesuaikan)
+    private void doProses(int train, double learningRate, double decLR, double minLR, int epoch, boolean urut, boolean disesuaikan)
     {
         final List<DatasetPojo> dataset = this.listener.getDataset();
         final Map<Integer, List<DatasetPojo>> groupedDataset = dataset.stream().collect(Collectors.groupingBy(DatasetPojo::getTarget));
@@ -548,6 +550,11 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             weightTable.addRow(data);
         });
         weightTable.fireTableDataChanged();
+
+        final DebuggableLVQ1 lvq = this.listener.getLVQ();
+        lvq.setSetting(learningRate, decLR, minLR, epoch);
+        lvq.setData(selectedDataset.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()), selectedWeight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()));
+        lvq.training();
     }
 
 
