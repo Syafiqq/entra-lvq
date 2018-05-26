@@ -6,8 +6,15 @@
 package com.github.syafiqq.entra.lvq.view;
 
 import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
 import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
+import com.github.syafiqq.entra.lvq.util.Settings;
 import java.util.Observer;
+import javax.swing.JTable;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.text.DefaultCaret;
 
 /**
  * @author Entra
@@ -16,6 +23,8 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
 {
     InteractionListener listener;
     private Observer logObserver;
+    private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
+    private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
 
     /**
      * Creates new form ProsesPengujianLVQFrame
@@ -24,6 +33,106 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
     {
         this.listener = listener;
         initComponents();
+        DefaultCaret caret = (DefaultCaret) this.testinglvqTextArea.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        this.initializeDataObserver();
+        this.initTable();
+        this.addInternalFrameListener(new COpenClosableInternalFrameListener()
+        {
+            @Override public void internalFrameOpened(InternalFrameEvent e)
+            {
+                ProsesPengujianLVQFrame.this.listener.getOTestingLog().addObserver(ProsesPengujianLVQFrame.this.logObserver);
+                ProsesPengujianLVQFrame.this.listener.getLVQ().testDistanceCalculationListener.add(ProsesPengujianLVQFrame.this.datasetObserver);
+                ProsesPengujianLVQFrame.this.listener.getLVQ().testAccuracyListeners.add(ProsesPengujianLVQFrame.this.accuracyObserver);
+                ProsesPengujianLVQFrame.this.callObserver();
+            }
+
+            @Override public void internalFrameClosed(InternalFrameEvent e)
+            {
+                ProsesPengujianLVQFrame.this.listener.getOTestingLog().deleteObserver(ProsesPengujianLVQFrame.this.logObserver);
+                ProsesPengujianLVQFrame.this.listener.getLVQ().testDistanceCalculationListener.remove(ProsesPengujianLVQFrame.this.datasetObserver);
+                ProsesPengujianLVQFrame.this.listener.getLVQ().testAccuracyListeners.remove(ProsesPengujianLVQFrame.this.accuracyObserver);
+            }
+        });
+    }
+
+    private void callObserver()
+    {
+        this.testinglvqTextArea.setText(this.listener.getOTestingLog().builder.toString());
+        final DefaultTableModel datasetTable = (DefaultTableModel) this.dataujiTable.getModel();
+        datasetTable.setRowCount(0);
+        this.listener.getLVQ().getTesting().forEach(dt -> {
+            Object[] data = new Object[24];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.dataset.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.dataset.target;
+            data[++c] = dt.actualTarget;
+            ++i;
+            datasetTable.addRow(data);
+        });
+        final DefaultTableModel weightTable = (DefaultTableModel) this.bobotakhirTable.getModel();
+        weightTable.setRowCount(0);
+        this.listener.getLVQ().getWeight().forEach(dt -> {
+            Object[] data = new Object[23];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.weight.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.weight.target;
+            ++i;
+            weightTable.addRow(data);
+        });
+        weightTable.fireTableDataChanged();
+        this.jTextField2.setText(String.format("%f", this.listener.getLVQ().calculateAccuracy(this.listener.getLVQ().getTesting())));
+    }
+
+    private void initTable()
+    {
+        this.dataujiTable.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target", "Aktual-Target"}));
+        this.dataujiTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.jScrollPane1.setViewportView(this.dataujiTable);
+        this.bobotakhirTable.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target"}));
+        this.bobotakhirTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.jScrollPane2.setViewportView(this.bobotakhirTable);
+    }
+
+    private void initializeDataObserver()
+    {
+        this.logObserver = (o, arg) -> this.testinglvqTextArea.setText(arg.toString());
+        this.datasetObserver = new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                final DefaultTableModel datasetTable = (DefaultTableModel) ProsesPengujianLVQFrame.this.dataujiTable.getModel();
+                int index = ProsesPengujianLVQFrame.this.listener.getLVQ().getDataset().indexOf(data);
+                int i = 0;
+                int c = 22;
+                datasetTable.setValueAt(data.actualTarget, index, ++c);
+                ++i;
+                datasetTable.fireTableDataChanged();
+            }
+        };
+        this.accuracyObserver = (same, size, accuracy) -> this.jTextField2.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
+
     }
 
     public interface InteractionListener
