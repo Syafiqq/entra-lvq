@@ -24,7 +24,6 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
 {
     InteractionListener listener;
     private Observer logObserver;
-    private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
     private DebuggableLVQ1.OnWeightUpdateListener weightObserver;
     private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
     private DebuggableLVQ1.OnTestingListener testObserver;
@@ -47,7 +46,6 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
             @Override public void internalFrameOpened(InternalFrameEvent e)
             {
                 ProsesPengujianLVQFrame.this.listener.getOTestingLog().addObserver(ProsesPengujianLVQFrame.this.logObserver);
-                ProsesPengujianLVQFrame.this.listener.getLVQ().testDistanceCalculationListener.add(ProsesPengujianLVQFrame.this.datasetObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testWeightUpdateListeners.add(ProsesPengujianLVQFrame.this.weightObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testAccuracyListeners.add(ProsesPengujianLVQFrame.this.accuracyObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testingListeners.add(ProsesPengujianLVQFrame.this.testObserver);
@@ -57,7 +55,6 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
             @Override public void internalFrameClosed(InternalFrameEvent e)
             {
                 ProsesPengujianLVQFrame.this.listener.getOTestingLog().deleteObserver(ProsesPengujianLVQFrame.this.logObserver);
-                ProsesPengujianLVQFrame.this.listener.getLVQ().testDistanceCalculationListener.remove(ProsesPengujianLVQFrame.this.datasetObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testWeightUpdateListeners.remove(ProsesPengujianLVQFrame.this.weightObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testAccuracyListeners.remove(ProsesPengujianLVQFrame.this.accuracyObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testingListeners.remove(ProsesPengujianLVQFrame.this.testObserver);
