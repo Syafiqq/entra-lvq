@@ -96,6 +96,14 @@ public class DebuggableLVQ1 extends LVQ1
             this.reduceLearningRate();
             this.calculateAccuracy(this.dataset);
             this.evaluateSatisfaction();
+            try
+            {
+                Thread.sleep(1000);
+            }
+            catch(InterruptedException e)
+            {
+                e.printStackTrace();
+            }
         }
     }
 
