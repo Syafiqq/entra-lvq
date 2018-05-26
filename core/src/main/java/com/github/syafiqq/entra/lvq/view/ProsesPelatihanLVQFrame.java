@@ -36,6 +36,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     private DebuggableLVQ1.OnWeightUpdateListener weightObserver;
     private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
     private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
+    private DebuggableLVQ1.OnTrainingListener trainObserver;
 
     /**
      * Creates new form ProsesPelatihanLVQFrame
@@ -75,38 +76,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     private void callObserver()
     {
         this.jTextArea1.setText(this.listener.getOTrainingLog().builder.toString());
-        final DefaultTableModel datasetTable = (DefaultTableModel) this.datalatihTable.getModel();
-        datasetTable.setRowCount(0);
-        this.listener.getLVQ().getDataset().forEach(dt -> {
-            Object[] data = new Object[24];
-            int i = 0;
-            int c = -1;
-            data[++c] = dt.dataset.id;
-            for(String idx : Settings.columns)
-            {
-                data[++c] = dt.vector(idx);
-            }
-            data[++c] = dt.dataset.target;
-            data[++c] = "-";
-            ++i;
-            datasetTable.addRow(data);
-        });
-        final DefaultTableModel weightTable = (DefaultTableModel) this.bobotawalTable.getModel();
-        weightTable.setRowCount(0);
-        this.listener.getLVQ().getWeight().forEach(dt -> {
-            Object[] data = new Object[23];
-            int i = 0;
-            int c = -1;
-            data[++c] = dt.weight.id;
-            for(String idx : Settings.columns)
-            {
-                data[++c] = dt.vector(idx);
-            }
-            data[++c] = dt.weight.target;
-            ++i;
-            weightTable.addRow(data);
-        });
-        weightTable.fireTableDataChanged();
+        this.repopulateTable(this.listener.getLVQ().getDataset(), this.listener.getLVQ().getWeight());
         this.jTextField1.setText(String.format("%f", this.listener.getLVQ().calculateAccuracy(this.listener.getLVQ().getDataset())));
     }
 
@@ -164,6 +134,43 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             }
         };
         this.accuracyObserver = (same, size, accuracy) -> this.jTextField1.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
+        this.trainObserver = this::repopulateTable;
+    }
+
+    private void repopulateTable(List<ProcessedDatasetPojo> train, List<ProcessedWeightPojo<Double>> weight)
+    {
+        final DefaultTableModel datasetTable = (DefaultTableModel) this.datalatihTable.getModel();
+        datasetTable.setRowCount(0);
+        train.forEach(dt -> {
+            Object[] data = new Object[24];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.dataset.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.dataset.target;
+            data[++c] = dt.actualTarget;
+            ++i;
+            datasetTable.addRow(data);
+        });
+        final DefaultTableModel weightTable = (DefaultTableModel) this.bobotawalTable.getModel();
+        weightTable.setRowCount(0);
+        weight.forEach(dt -> {
+            Object[] data = new Object[23];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.weight.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.weight.target;
+            ++i;
+            weightTable.addRow(data);
+        });
+        weightTable.fireTableDataChanged();
     }
 
     private void initTable()
@@ -646,40 +653,6 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         }
 
         List<DatasetPojo> selectedTesting = dataset.stream().filter(d -> !selectedDataset.contains(d)).collect(Collectors.toList());
-
-        final DefaultTableModel datasetTable = (DefaultTableModel) this.datalatihTable.getModel();
-        datasetTable.setRowCount(0);
-        selectedDataset.forEach(dt -> {
-            Object[] data = new Object[24];
-            int i = 0;
-            int c = -1;
-            data[++c] = dt.id;
-            for(String idx : Settings.columns)
-            {
-                data[++c] = dt.vector(idx);
-            }
-            data[++c] = dt.target;
-            data[++c] = "-";
-            ++i;
-            datasetTable.addRow(data);
-        });
-        final DefaultTableModel weightTable = (DefaultTableModel) this.bobotawalTable.getModel();
-        weightTable.setRowCount(0);
-        selectedWeight.forEach(dt -> {
-            Object[] data = new Object[23];
-            int i = 0;
-            int c = -1;
-            data[++c] = dt.id;
-            for(String idx : Settings.columns)
-            {
-                data[++c] = dt.vector(idx);
-            }
-            data[++c] = dt.target;
-            ++i;
-            weightTable.addRow(data);
-        });
-        weightTable.fireTableDataChanged();
-
         final DebuggableLVQ1 lvq = this.listener.getLVQ();
         lvq.setSetting(learningRate, decLR, minLR, epoch);
         lvq.setData(selectedDataset.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()), selectedWeight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()), selectedTesting.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()));
