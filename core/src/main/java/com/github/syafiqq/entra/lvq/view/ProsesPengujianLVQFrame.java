@@ -5,18 +5,32 @@
  */
 package com.github.syafiqq.entra.lvq.view;
 
+import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
+import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
+import java.util.Observer;
+
 /**
  * @author Entra
  */
 public class ProsesPengujianLVQFrame extends ClosableInternalFrame
 {
+    InteractionListener listener;
+    private Observer logObserver;
 
     /**
      * Creates new form ProsesPengujianLVQFrame
      */
-    public ProsesPengujianLVQFrame()
+    public ProsesPengujianLVQFrame(InteractionListener listener)
     {
+        this.listener = listener;
         initComponents();
+    }
+
+    public interface InteractionListener
+    {
+        DebuggableLVQ1 getLVQ();
+
+        OStringBuilder getOTestingLog();
     }
 
     /**
