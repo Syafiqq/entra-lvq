@@ -27,6 +27,7 @@ public class DebuggableLVQ1 extends LVQ1
 
     public final List<OnDistanceCalculationListener> testDistanceCalculationListener = new LinkedList<>();
     public final List<OnWeightUpdateListener> testWeightUpdateListeners = new LinkedList<>();
+    public final List<OnPostCalculateAccuracyListener> testAccuracyListeners = new LinkedList<>();
 
     public DebuggableLVQ1(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedDatasetPojo> dataset, List<ProcessedWeightPojo<Double>> weight)
     {
@@ -130,6 +131,9 @@ public class DebuggableLVQ1 extends LVQ1
             this.testWeightUpdateListeners.forEach(l -> l.update(min));
             this.testWeightUpdateListeners.forEach(l -> l.postUpdate(min));
         }
+        int same = (int) testing.stream().filter(ProcessedDatasetPojo::isSameClass).count();
+        double accuracy = same * 1.0f / testing.size() * 100.f;
+        this.testAccuracyListeners.forEach(l -> l.calculateAccuracy(same, testing.size(), this.calculateAccuracy(testing)));
     }
 
     @Override public void reduceLearningRate()
