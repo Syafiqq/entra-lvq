@@ -35,6 +35,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     private Observer logObserver;
     private DebuggableLVQ1.OnWeightUpdateListener weightObserver;
     private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
+    private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
 
     /**
      * Creates new form ProsesPelatihanLVQFrame
@@ -57,6 +58,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 ProsesPelatihanLVQFrame.this.listener.getOTrainingLog().addObserver(ProsesPelatihanLVQFrame.this.logObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().weightUpdateListeners.add(ProsesPelatihanLVQFrame.this.weightObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().distanceCalculationListener.add(ProsesPelatihanLVQFrame.this.datasetObserver);
+                ProsesPelatihanLVQFrame.this.listener.getLVQ().accuracyListeners.add(ProsesPelatihanLVQFrame.this.accuracyObserver);
             }
 
             @Override public void internalFrameClosed(InternalFrameEvent e)
@@ -64,6 +66,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 ProsesPelatihanLVQFrame.this.listener.getOTrainingLog().deleteObserver(ProsesPelatihanLVQFrame.this.logObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().weightUpdateListeners.remove(ProsesPelatihanLVQFrame.this.weightObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().distanceCalculationListener.remove(ProsesPelatihanLVQFrame.this.datasetObserver);
+                ProsesPelatihanLVQFrame.this.listener.getLVQ().accuracyListeners.remove(ProsesPelatihanLVQFrame.this.accuracyObserver);
             }
         });
         this.callObserver();
@@ -167,6 +170,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 datasetTable.fireTableDataChanged();
             }
         };
+        this.accuracyObserver = (same, size, accuracy) -> this.jTextField1.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
     }
 
     private void initTable()
