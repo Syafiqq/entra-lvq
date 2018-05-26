@@ -38,6 +38,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     private OList<ProcessedDatasetPojo> oDataset;
     private OList<ProcessedWeightPojo<Double>> oWeight;
     public OStringBuilder trainingLog = new OStringBuilder(new StringBuilder());
+    public OStringBuilder testingLog = new OStringBuilder(new StringBuilder());
     private DebuggableLVQ1 lvq;
 
     /**
@@ -586,7 +587,8 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     @Override public void beginTraining()
     {
         this.trainingLog.setLength(0);
-        new Thread(lvq::training).start();
+        this.testingLog.setLength(0);
+        new Thread(lvq::trainingAndTesting).start();
     }
 
     @Override public OStringBuilder getOTrainingLog()
