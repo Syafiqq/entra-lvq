@@ -10,6 +10,7 @@ import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
 import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
 import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
 import com.github.syafiqq.entra.lvq.util.Settings;
+import java.util.List;
 import java.util.Observer;
 import javax.swing.JTable;
 import javax.swing.event.InternalFrameEvent;
@@ -25,6 +26,8 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
     private Observer logObserver;
     private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
     private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
+    private DebuggableLVQ1.OnTestingListener testObserver;
+
 
     /**
      * Creates new form ProsesPengujianLVQFrame
@@ -45,6 +48,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
                 ProsesPengujianLVQFrame.this.listener.getOTestingLog().addObserver(ProsesPengujianLVQFrame.this.logObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testDistanceCalculationListener.add(ProsesPengujianLVQFrame.this.datasetObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testAccuracyListeners.add(ProsesPengujianLVQFrame.this.accuracyObserver);
+                ProsesPengujianLVQFrame.this.listener.getLVQ().testingListeners.add(ProsesPengujianLVQFrame.this.testObserver);
                 ProsesPengujianLVQFrame.this.callObserver();
             }
 
@@ -53,6 +57,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
                 ProsesPengujianLVQFrame.this.listener.getOTestingLog().deleteObserver(ProsesPengujianLVQFrame.this.logObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testDistanceCalculationListener.remove(ProsesPengujianLVQFrame.this.datasetObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testAccuracyListeners.remove(ProsesPengujianLVQFrame.this.accuracyObserver);
+                ProsesPengujianLVQFrame.this.listener.getLVQ().testingListeners.remove(ProsesPengujianLVQFrame.this.testObserver);
             }
         });
     }
@@ -60,9 +65,15 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
     private void callObserver()
     {
         this.testinglvqTextArea.setText(this.listener.getOTestingLog().builder.toString());
+        this.repopulateTable(this.listener.getLVQ().getTesting(), this.listener.getLVQ().getWeight());
+        this.jTextField2.setText(String.format("%f", this.listener.getLVQ().calculateAccuracy(this.listener.getLVQ().getTesting())));
+    }
+
+    private void repopulateTable(List<ProcessedDatasetPojo> testing, List<ProcessedWeightPojo<Double>> weight)
+    {
         final DefaultTableModel datasetTable = (DefaultTableModel) this.dataujiTable.getModel();
         datasetTable.setRowCount(0);
-        this.listener.getLVQ().getTesting().forEach(dt -> {
+        testing.forEach(dt -> {
             Object[] data = new Object[24];
             int i = 0;
             int c = -1;
@@ -78,7 +89,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
         });
         final DefaultTableModel weightTable = (DefaultTableModel) this.bobotakhirTable.getModel();
         weightTable.setRowCount(0);
-        this.listener.getLVQ().getWeight().forEach(dt -> {
+        weight.forEach(dt -> {
             Object[] data = new Object[23];
             int i = 0;
             int c = -1;
@@ -92,7 +103,6 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
             weightTable.addRow(data);
         });
         weightTable.fireTableDataChanged();
-        this.jTextField2.setText(String.format("%f", this.listener.getLVQ().calculateAccuracy(this.listener.getLVQ().getTesting())));
     }
 
     private void initTable()
@@ -132,7 +142,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
             }
         };
         this.accuracyObserver = (same, size, accuracy) -> this.jTextField2.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
-
+        this.testObserver = this::repopulateTable;
     }
 
     public interface InteractionListener
