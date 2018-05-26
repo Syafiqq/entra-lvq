@@ -28,13 +28,14 @@ import javax.swing.JInternalFrame;
 /**
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener
 {
 
     private ClosableInternalFrame fDataset;
     private ClosableInternalFrame fTraining;
     private ClosableInternalFrame fTesting;
     private ClosableInternalFrame fJarakTraining;
+    private ClosableInternalFrame fBobotTraining;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -556,10 +557,14 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         // TODO add your handling code here:
         try
         {
-            BobotTrainingFrame dataset = new BobotTrainingFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
+            if(this.fBobotTraining == null)
+            {
+                this.fBobotTraining = new BobotTrainingFrame(this);
+                this.jDesktopPane1.add(fBobotTraining);
+                this.fBobotTraining.setMaximum(true);
+                this.fBobotTraining.addInternalFrameListener(e -> this.fBobotTraining = null);
+            }
+            setTopAndActivate(this.fBobotTraining);
         }
         catch(PropertyVetoException ex)
         {
@@ -703,6 +708,11 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     @Override public OStringBuilder getJarakTrainingLog()
     {
         return this.trainingCompleteDistanceLog;
+    }
+
+    @Override public OStringBuilder getBobotTrainingLog()
+    {
+        return trainingCompleteWeightLog;
     }
 
     private void setTopAndActivate(JInternalFrame frame) throws PropertyVetoException
