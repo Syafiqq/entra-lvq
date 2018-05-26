@@ -28,12 +28,13 @@ import javax.swing.JInternalFrame;
 /**
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener
 {
 
     private ClosableInternalFrame fDataset;
     private ClosableInternalFrame fTraining;
     private ClosableInternalFrame fTesting;
+    private ClosableInternalFrame fJarakTraining;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -535,10 +536,14 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         // TODO add your handling code here:
         try
         {
-            JarakTrainingFrame dataset = new JarakTrainingFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
+            if(this.fJarakTraining == null)
+            {
+                this.fJarakTraining = new JarakTrainingFrame(this);
+                this.jDesktopPane1.add(fJarakTraining);
+                this.fJarakTraining.setMaximum(true);
+                this.fJarakTraining.addInternalFrameListener(e -> this.fJarakTraining = null);
+            }
+            setTopAndActivate(this.fJarakTraining);
         }
         catch(PropertyVetoException ex)
         {
@@ -693,6 +698,11 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     @Override public OStringBuilder getOTrainingLog()
     {
         return trainingLog;
+    }
+
+    @Override public OStringBuilder getJarakTrainingLog()
+    {
+        return this.trainingCompleteDistanceLog;
     }
 
     private void setTopAndActivate(JInternalFrame frame) throws PropertyVetoException
