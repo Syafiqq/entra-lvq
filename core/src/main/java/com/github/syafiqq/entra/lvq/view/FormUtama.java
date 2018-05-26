@@ -112,6 +112,22 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
                 trainingLog.append("===End Update Weight===\n");
             }
         });
+        this.lvq.reducedLearningRateListener.add((lr, lrr, r) -> {
+            trainingLog.append("===Begin Reduce Learning Rate===\n");
+            trainingLog.append(String.format("Reduce Learning rate [%g] with learning rate reduction component [%f] resulting [%f]\n", lr, lrr, r));
+            trainingLog.append("===End Reduce Learning Rate===\n");
+        });
+        this.lvq.accuracyListeners.add((s, t, acc) -> {
+            trainingLog.append("===Begin Calculate Accuracy===\n");
+            trainingLog.append(String.format("The Correct Class is %d of %d resulting %f%%\n", s, t, acc));
+            trainingLog.append("===End Calculate Accuracy===\n");
+        });
+        this.lvq.satisfactionEvaluationListeners.add(e -> {
+            trainingLog.append("===Begin Satisfaction Evaluation===\n");
+            trainingLog.append(String.format("Update Epoch to %d\n", e));
+            trainingLog.append("===End Satisfaction Evaluation===\n");
+            trainingLog.append(String.format("==End Epoch [%d]==\n\n", e - 1));
+        });
     }
 
     /**
