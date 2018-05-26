@@ -129,6 +129,49 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             trainingLog.append("===End Satisfaction Evaluation===\n");
             trainingLog.append(String.format("==End Epoch [%d]==\n\n", e - 1));
         });
+
+
+        this.lvq.testDistanceCalculationListener.add(new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("==Begin Testing==\n");
+                testingLog.append("===Begin Calculate Distance===\n");
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append(String.format("Distance [%d, %d] against [%d, %d] resulting %f \n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance()));
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("===End Calculate Distance===\n");
+            }
+        });
+        this.lvq.testWeightUpdateListeners.add(new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+                testingLog.append("===Begin Classify===\n");
+                testingLog.append(String.format("The closest distance of [%d %d] is [%d, %d] which are [%g] so the data can be classified as Class [%d]\n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance(), data.actualTarget));
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append("===End Classify===\n");
+            }
+        });
+        this.lvq.testAccuracyListeners.add((s, t, acc) -> {
+            testingLog.append("===Begin Calculate Accuracy===\n");
+            testingLog.append(String.format("The Correct Class is %d of %d resulting %f%%\n", s, t, acc));
+            testingLog.append("===End Calculate Accuracy===\n");
+            testingLog.append("==End Testing==\n");
+        });
     }
 
     /**
