@@ -107,7 +107,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             weightTable.addRow(data);
         });
         weightTable.fireTableDataChanged();
-        this.listener.getLVQ().calculateAccuracy(this.listener.getLVQ().getDataset());
+        this.jTextField1.setText(String.format("%f", this.listener.getLVQ().calculateAccuracy(this.listener.getLVQ().getDataset())));
     }
 
     private void initializeDataObserver()
