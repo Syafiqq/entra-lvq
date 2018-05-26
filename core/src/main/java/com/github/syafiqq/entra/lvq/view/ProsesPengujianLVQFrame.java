@@ -25,6 +25,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
     InteractionListener listener;
     private Observer logObserver;
     private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
+    private DebuggableLVQ1.OnWeightUpdateListener weightObserver;
     private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
     private DebuggableLVQ1.OnTestingListener testObserver;
 
@@ -47,6 +48,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
             {
                 ProsesPengujianLVQFrame.this.listener.getOTestingLog().addObserver(ProsesPengujianLVQFrame.this.logObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testDistanceCalculationListener.add(ProsesPengujianLVQFrame.this.datasetObserver);
+                ProsesPengujianLVQFrame.this.listener.getLVQ().testWeightUpdateListeners.add(ProsesPengujianLVQFrame.this.weightObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testAccuracyListeners.add(ProsesPengujianLVQFrame.this.accuracyObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testingListeners.add(ProsesPengujianLVQFrame.this.testObserver);
                 ProsesPengujianLVQFrame.this.callObserver();
@@ -56,6 +58,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
             {
                 ProsesPengujianLVQFrame.this.listener.getOTestingLog().deleteObserver(ProsesPengujianLVQFrame.this.logObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testDistanceCalculationListener.remove(ProsesPengujianLVQFrame.this.datasetObserver);
+                ProsesPengujianLVQFrame.this.listener.getLVQ().testWeightUpdateListeners.remove(ProsesPengujianLVQFrame.this.weightObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testAccuracyListeners.remove(ProsesPengujianLVQFrame.this.accuracyObserver);
                 ProsesPengujianLVQFrame.this.listener.getLVQ().testingListeners.remove(ProsesPengujianLVQFrame.this.testObserver);
             }
@@ -120,19 +123,9 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
     private void initializeDataObserver()
     {
         this.logObserver = (o, arg) -> this.testinglvqTextArea.setText(arg.toString());
-        this.datasetObserver = new DebuggableLVQ1.OnDistanceCalculationListener()
+        this.weightObserver = new DebuggableLVQ1.OnWeightUpdateListener()
         {
-            @Override public void preCalculated(ProcessedDatasetPojo data)
-            {
-
-            }
-
-            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
-            {
-
-            }
-
-            @Override public void postCalculated(ProcessedDatasetPojo data)
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
             {
                 final DefaultTableModel datasetTable = (DefaultTableModel) ProsesPengujianLVQFrame.this.dataujiTable.getModel();
                 int index = ProsesPengujianLVQFrame.this.listener.getLVQ().getTesting().indexOf(data);
@@ -141,6 +134,16 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
                 datasetTable.setValueAt(data.actualTarget, index, ++c);
                 ++i;
                 datasetTable.fireTableDataChanged();
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+
             }
         };
         this.accuracyObserver = (same, size, accuracy) -> {
