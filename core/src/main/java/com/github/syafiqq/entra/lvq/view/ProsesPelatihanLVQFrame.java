@@ -61,6 +61,38 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     private void callObserver()
     {
         this.jTextArea1.setText(this.listener.getOTrainingLog().builder.toString());
+        final DefaultTableModel datasetTable = (DefaultTableModel) this.datalatihTable.getModel();
+        datasetTable.setRowCount(0);
+        this.listener.getLVQ().getDataset().forEach(dt -> {
+            Object[] data = new Object[24];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.dataset.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.dataset.target;
+            data[++c] = "-";
+            ++i;
+            datasetTable.addRow(data);
+        });
+        final DefaultTableModel weightTable = (DefaultTableModel) this.bobotawalTable.getModel();
+        weightTable.setRowCount(0);
+        this.listener.getLVQ().getWeight().forEach(dt -> {
+            Object[] data = new Object[23];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.weight.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.weight.target;
+            ++i;
+            weightTable.addRow(data);
+        });
+        weightTable.fireTableDataChanged();
     }
 
     private void initializeDataObserver()
