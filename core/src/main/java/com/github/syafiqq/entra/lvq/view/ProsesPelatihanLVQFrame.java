@@ -125,7 +125,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 final DefaultTableModel weightTable = (DefaultTableModel) ProsesPelatihanLVQFrame.this.bobotawalTable.getModel();
                 int index = ProsesPelatihanLVQFrame.this.listener.getLVQ().getWeight().indexOf(weight);
                 int i = 0;
-                int c = -1;
+                int c = 0;
                 for(String idx : Settings.columns)
                 {
                     weightTable.setValueAt(weight.vector(idx), index, ++c);
@@ -157,7 +157,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 final DefaultTableModel datasetTable = (DefaultTableModel) ProsesPelatihanLVQFrame.this.datalatihTable.getModel();
                 int index = ProsesPelatihanLVQFrame.this.listener.getLVQ().getDataset().indexOf(data);
                 int i = 0;
-                int c = -1;
+                int c = 22;
                 datasetTable.setValueAt(data.actualTarget, index, ++c);
                 ++i;
                 datasetTable.fireTableDataChanged();
