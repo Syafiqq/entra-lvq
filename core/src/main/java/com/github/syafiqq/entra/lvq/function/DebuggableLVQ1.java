@@ -49,7 +49,7 @@ public class DebuggableLVQ1 extends LVQ1
         super.weight.clear();
         super.dataset.addAll(this.pDataset);
         super.weight.addAll(this.pWeight);
-        this.postInitializeListener.forEach(l -> l.postInitialization(super.learningRate, super.lrReduction, super.lrThreshold, super.maxIteration, super.weight, super.dataset));
+        this.postInitializeListener.forEach(l -> l.postInitialization(super.learningRate, super.lrReduction, super.lrThreshold, super.maxIteration + 1, super.weight, super.dataset));
     }
 
     @Override public boolean isSatisfied()
