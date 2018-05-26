@@ -15,6 +15,7 @@ import java.util.List;
 public class DebuggableLVQ1 extends LVQ1
 {
     private final List<ProcessedDatasetPojo> pDataset;
+    private final List<ProcessedDatasetPojo> pTesting;
     private final List<ProcessedWeightPojo<Double>> pWeight;
 
     public final List<OnPostInitializationListener> postInitializeListener = new LinkedList<>();
@@ -33,6 +34,7 @@ public class DebuggableLVQ1 extends LVQ1
     {
         super(learningRate, lrReduction, lrThreshold, maxIteration);
         this.pDataset = new LinkedList<>();
+        this.pTesting = new LinkedList<>();
         this.pWeight = new LinkedList<>();
     }
 
@@ -44,12 +46,14 @@ public class DebuggableLVQ1 extends LVQ1
         super.maxIteration = maxIteration - 1;
     }
 
-    public void setData(List<ProcessedDatasetPojo> dataset, List<ProcessedWeightPojo<Double>> weight)
+    public void setData(List<ProcessedDatasetPojo> dataset, List<ProcessedWeightPojo<Double>> weight, List<ProcessedDatasetPojo> testing)
     {
         this.pDataset.clear();
+        this.pTesting.clear();
         this.pWeight.clear();
         this.pDataset.addAll(dataset);
         this.pWeight.addAll(weight);
+        this.pTesting.addAll(testing);
     }
 
     @Override public void initialization()
@@ -67,6 +71,13 @@ public class DebuggableLVQ1 extends LVQ1
         this.postSatisfactionListeners.forEach(s -> s.postSatisfaction(super.counter + 1, super.maxIteration + 1, super.learningRate, super.lrThreshold, satisfied));
         return satisfied;
     }
+
+    public void trainingAndTesting()
+    {
+        this.training();
+        this.testing(this.pTesting);
+    }
+
 
     @Override public void training()
     {
