@@ -28,7 +28,7 @@ import javax.swing.JInternalFrame;
 /**
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener, JarakTestingFrame.InteractionListener
 {
 
     private ClosableInternalFrame fDataset;
@@ -36,6 +36,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     private ClosableInternalFrame fTesting;
     private ClosableInternalFrame fJarakTraining;
     private ClosableInternalFrame fBobotTraining;
+    private ClosableInternalFrame fJarakTesting;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -577,10 +578,14 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         // TODO add your handling code here:
         try
         {
-            JarakTestingFrame dataset = new JarakTestingFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
+            if(this.fJarakTesting == null)
+            {
+                this.fJarakTesting = new JarakTestingFrame(this);
+                this.jDesktopPane1.add(fJarakTesting);
+                this.fJarakTesting.setMaximum(true);
+                this.fJarakTesting.addInternalFrameListener(e -> this.fJarakTesting = null);
+            }
+            setTopAndActivate(this.fJarakTesting);
         }
         catch(PropertyVetoException ex)
         {
@@ -713,6 +718,11 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     @Override public OStringBuilder getBobotTrainingLog()
     {
         return trainingCompleteWeightLog;
+    }
+
+    @Override public OStringBuilder getJarakTesting()
+    {
+        return this.testingCompleteWeightLog;
     }
 
     private void setTopAndActivate(JInternalFrame frame) throws PropertyVetoException
