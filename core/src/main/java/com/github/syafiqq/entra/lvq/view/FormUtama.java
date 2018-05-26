@@ -94,6 +94,24 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
                 trainingLog.append("===End Calculate Distance===\n");
             }
         });
+        this.lvq.weightUpdateListeners.add(new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+                trainingLog.append("===Begin Update Weight===\n");
+                trainingLog.append(String.format("Minimum weight distance is [%d, %d, %g] which are %s with data [%d %d] so the weight is move %s the data\n", weight.weight.id, weight.weight.target, weight.getDistance(), sameSignature ? "Same Class" : "Different Class", data.dataset.id, data.dataset.target, sameSignature ? "Closer to" : "Away from"));
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+                trainingLog.append(String.format("Resulting Weight is : %s\n", weight.toString()));
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+                trainingLog.append("===End Update Weight===\n");
+            }
+        });
     }
 
     /**
