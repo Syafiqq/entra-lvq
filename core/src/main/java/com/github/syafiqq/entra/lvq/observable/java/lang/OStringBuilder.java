@@ -11,7 +11,7 @@ import java.util.Observable;
  */
 public class OStringBuilder extends Observable
 {
-    final StringBuilder builder;
+    public final StringBuilder builder;
 
     public OStringBuilder(StringBuilder builder)
     {
