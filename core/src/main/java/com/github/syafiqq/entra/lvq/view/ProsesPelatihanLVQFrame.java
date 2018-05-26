@@ -645,6 +645,8 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             selectedWeight.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id)));
         }
 
+        List<DatasetPojo> selectedTesting = dataset.stream().filter(d -> !selectedDataset.contains(d)).collect(Collectors.toList());
+
         final DefaultTableModel datasetTable = (DefaultTableModel) this.datalatihTable.getModel();
         datasetTable.setRowCount(0);
         selectedDataset.forEach(dt -> {
@@ -680,7 +682,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
 
         final DebuggableLVQ1 lvq = this.listener.getLVQ();
         lvq.setSetting(learningRate, decLR, minLR, epoch);
-        lvq.setData(selectedDataset.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()), selectedWeight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()));
+        lvq.setData(selectedDataset.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()), selectedWeight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()), selectedTesting.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()));
         this.listener.beginTraining();
     }
 
