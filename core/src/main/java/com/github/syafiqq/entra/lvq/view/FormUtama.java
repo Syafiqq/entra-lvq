@@ -77,6 +77,23 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             trainingLog.append(String.format("Result %s\n", result ? "Satisfied" : "Not Satisfied"));
             trainingLog.append("===End Check Satisfaction===\n");
         });
+        this.lvq.distanceCalculationListener.add(new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+                trainingLog.append("===Begin Calculate Distance===\n");
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+                trainingLog.append(String.format("Distance %s against %s resulting %f \n", data.toString(), weight.toString(), weight.getDistance()));
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                trainingLog.append("===End Calculate Distance===\n");
+            }
+        });
     }
 
     /**
