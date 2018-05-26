@@ -19,6 +19,7 @@ public class DebuggableLVQ1 extends LVQ1
 
     public final List<OnPostInitializationListener> postInitializeListener = new LinkedList<>();
     public final List<OnPostSatisfactionListener> postSatisfactionListeners = new LinkedList<>();
+    public final List<OnDistanceCalculationListener> distanceCalculationListener = new LinkedList<>();
 
     public DebuggableLVQ1(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedDatasetPojo> dataset, List<ProcessedWeightPojo<Double>> weight)
     {
@@ -59,6 +60,37 @@ public class DebuggableLVQ1 extends LVQ1
         return satisfied;
     }
 
+    @Override public void training()
+    {
+        this.counter = 0;
+        this.initialization();
+        while(!this.isSatisfied())
+        {
+            for(ProcessedDatasetPojo data : this.dataset)
+            {
+                this.distanceCalculationListener.forEach(l -> l.preCalculated(data));
+                for(ProcessedWeightPojo<Double> w : this.weight)
+                {
+                    w.calculateDistance(data);
+                    this.distanceCalculationListener.forEach(l -> l.calculated(data, w));
+                }
+                this.distanceCalculationListener.forEach(l -> l.postCalculated(data));
+                final ProcessedWeightPojo<Double> min = this.findMinimum(this.weight);
+                if(min.isSameSignature(data))
+                {
+                    this.moveCloser(data, min);
+                }
+                else
+                {
+                    this.moveAway(data, min);
+                }
+            }
+            this.reduceLearningRate();
+            this.calculateAccuracy(this.dataset);
+            this.evaluateSatisfaction();
+        }
+    }
+
     public interface OnPostInitializationListener
     {
         void postInitialization(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedWeightPojo<Double>> dataset, List<ProcessedDatasetPojo> weight);
@@ -67,5 +99,14 @@ public class DebuggableLVQ1 extends LVQ1
     public interface OnPostSatisfactionListener
     {
         void postSatisfaction(int epoch, int maxEpoch, double learningRate, double lrThreshold, boolean result);
+    }
+
+    public interface OnDistanceCalculationListener
+    {
+        void preCalculated(ProcessedDatasetPojo data);
+
+        void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight);
+
+        void postCalculated(ProcessedDatasetPojo data);
     }
 }
