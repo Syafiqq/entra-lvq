@@ -125,12 +125,10 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 int index = ProsesPelatihanLVQFrame.this.listener.getLVQ().getWeight().indexOf(weight);
                 int i = 0;
                 int c = -1;
-                weightTable.setValueAt(weight.weight.id, index, ++c);
                 for(String idx : Settings.columns)
                 {
                     weightTable.setValueAt(weight.vector(idx), index, ++c);
                 }
-                weightTable.setValueAt(weight.weight.target, index, ++c);
                 ++i;
                 weightTable.fireTableDataChanged();
             }
@@ -159,12 +157,6 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 int index = ProsesPelatihanLVQFrame.this.listener.getLVQ().getDataset().indexOf(data);
                 int i = 0;
                 int c = -1;
-                datasetTable.setValueAt(data.dataset.id, index, ++c);
-                for(String idx : Settings.columns)
-                {
-                    datasetTable.setValueAt(data.vector(idx), index, ++c);
-                }
-                datasetTable.setValueAt(data.dataset.target, index, ++c);
                 datasetTable.setValueAt(data.actualTarget, index, ++c);
                 ++i;
                 datasetTable.fireTableDataChanged();
