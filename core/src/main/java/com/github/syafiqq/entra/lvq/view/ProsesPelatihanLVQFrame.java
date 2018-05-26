@@ -34,6 +34,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     InteractionListener listener;
     private Observer logObserver;
     private DebuggableLVQ1.OnWeightUpdateListener weightObserver;
+    private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
 
     /**
      * Creates new form ProsesPelatihanLVQFrame
@@ -55,12 +56,14 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             {
                 ProsesPelatihanLVQFrame.this.listener.getOTrainingLog().addObserver(ProsesPelatihanLVQFrame.this.logObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().weightUpdateListeners.add(ProsesPelatihanLVQFrame.this.weightObserver);
+                ProsesPelatihanLVQFrame.this.listener.getLVQ().distanceCalculationListener.add(ProsesPelatihanLVQFrame.this.datasetObserver);
             }
 
             @Override public void internalFrameClosed(InternalFrameEvent e)
             {
                 ProsesPelatihanLVQFrame.this.listener.getOTrainingLog().deleteObserver(ProsesPelatihanLVQFrame.this.logObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().weightUpdateListeners.remove(ProsesPelatihanLVQFrame.this.weightObserver);
+                ProsesPelatihanLVQFrame.this.listener.getLVQ().distanceCalculationListener.remove(ProsesPelatihanLVQFrame.this.datasetObserver);
             }
         });
         this.callObserver();
@@ -132,6 +135,36 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
             {
 
+            }
+        };
+        this.datasetObserver = new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                final DefaultTableModel datasetTable = (DefaultTableModel) ProsesPelatihanLVQFrame.this.datalatihTable.getModel();
+                int index = ProsesPelatihanLVQFrame.this.listener.getLVQ().getDataset().indexOf(data);
+                int i = 0;
+                int c = -1;
+                datasetTable.setValueAt(data.dataset.id, index, ++c);
+                for(String idx : Settings.columns)
+                {
+                    datasetTable.setValueAt(data.vector(idx), index, ++c);
+                }
+                datasetTable.setValueAt(data.dataset.target, index, ++c);
+                datasetTable.setValueAt(data.actualTarget, index, ++c);
+                ++i;
+                datasetTable.fireTableDataChanged();
             }
         };
     }
