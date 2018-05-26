@@ -87,6 +87,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
             ++i;
             datasetTable.addRow(data);
         });
+        datasetTable.fireTableDataChanged();
         final DefaultTableModel weightTable = (DefaultTableModel) this.bobotakhirTable.getModel();
         weightTable.setRowCount(0);
         weight.forEach(dt -> {
@@ -133,7 +134,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
             @Override public void postCalculated(ProcessedDatasetPojo data)
             {
                 final DefaultTableModel datasetTable = (DefaultTableModel) ProsesPengujianLVQFrame.this.dataujiTable.getModel();
-                int index = ProsesPengujianLVQFrame.this.listener.getLVQ().getDataset().indexOf(data);
+                int index = ProsesPengujianLVQFrame.this.listener.getLVQ().getTesting().indexOf(data);
                 int i = 0;
                 int c = 22;
                 datasetTable.setValueAt(data.actualTarget, index, ++c);

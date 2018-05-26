@@ -157,6 +157,8 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             ++i;
             datasetTable.addRow(data);
         });
+        datasetTable.fireTableDataChanged();
+
         final DefaultTableModel weightTable = (DefaultTableModel) this.bobotawalTable.getModel();
         weightTable.setRowCount(0);
         weight.forEach(dt -> {
