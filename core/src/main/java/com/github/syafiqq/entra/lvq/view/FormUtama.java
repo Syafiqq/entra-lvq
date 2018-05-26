@@ -28,11 +28,12 @@ import javax.swing.JInternalFrame;
 /**
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener
 {
 
     private ClosableInternalFrame fDataset;
     private ClosableInternalFrame fTraining;
+    private ClosableInternalFrame fTesting;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -468,10 +469,14 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         // TODO add your handling code here:
         try
         {
-            ProsesPengujianLVQFrame dataset = new ProsesPengujianLVQFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
+            if(this.fTesting == null)
+            {
+                this.fTesting = new ProsesPengujianLVQFrame(this);
+                this.jDesktopPane1.add(fTesting);
+                this.fTesting.setMaximum(true);
+                this.fTesting.addInternalFrameListener(e -> this.fTesting = null);
+            }
+            setTopAndActivate(this.fTesting);
         }
         catch(PropertyVetoException ex)
         {
@@ -620,6 +625,11 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     @Override public DebuggableLVQ1 getLVQ()
     {
         return this.lvq;
+    }
+
+    @Override public OStringBuilder getOTestingLog()
+    {
+        return this.testingLog;
     }
 
     @Override public List<WeightPojo> getWeight()
