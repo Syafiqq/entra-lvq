@@ -135,8 +135,8 @@ public class DebuggableLVQ1 extends LVQ1
                 this.testDistanceCalculationListener.forEach(l -> l.calculated(data, w));
 
             }
-            final ProcessedWeightPojo<Double> min = this.findMinimum(this.weight);
             this.testDistanceCalculationListener.forEach(l -> l.postCalculated(data));
+            final ProcessedWeightPojo<Double> min = this.findMinimum(this.weight);
             this.testWeightUpdateListeners.forEach(l -> l.preUpdate(data, min, min.isSameSignature(data)));
             min.isSameSignature(data);
             this.testWeightUpdateListeners.forEach(l -> l.update(min));
