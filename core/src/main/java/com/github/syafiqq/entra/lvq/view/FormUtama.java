@@ -40,6 +40,9 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     private OList<ProcessedWeightPojo<Double>> oWeight;
     public OStringBuilder trainingLog = new OStringBuilder(new StringBuilder());
     public OStringBuilder testingLog = new OStringBuilder(new StringBuilder());
+    public OStringBuilder trainingCompleteDistanceLog = new OStringBuilder(new StringBuilder());
+    public OStringBuilder trainingCompleteWeightLog = new OStringBuilder(new StringBuilder());
+    public OStringBuilder testingCompleteWeightLog = new OStringBuilder(new StringBuilder());
     private DebuggableLVQ1 lvq;
 
     /**
@@ -70,6 +73,9 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             trainingLog.append("=Bobot=\n");
             weight.forEach(w -> trainingLog.append(String.format("%s\n", w)));
             trainingLog.append("==End Initialization Phase==\n");
+
+            trainingCompleteDistanceLog.append("==Initialization Phase==\n");
+            trainingCompleteWeightLog.append("==Initialization Phase==\n");
         });
         this.lvq.postSatisfactionListeners.add((epoch, maxEpoch, learningRate, maxLearningRate, result) -> {
             trainingLog.append(String.format("\n==Begin Epoch [%d] ==\n", epoch));
@@ -78,22 +84,32 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             trainingLog.append(String.format("LearningRate %g of %g\n", learningRate, maxLearningRate));
             trainingLog.append(String.format("Result %s\n", result ? "Satisfied" : "Not Satisfied"));
             trainingLog.append("===End Check Satisfaction===\n");
+
+            trainingCompleteDistanceLog.append(String.format("\n==Begin Epoch [%d] ==\n", epoch));
+            trainingCompleteWeightLog.append(String.format("\n==Begin Epoch [%d] ==\n", epoch));
         });
         this.lvq.distanceCalculationListener.add(new DebuggableLVQ1.OnDistanceCalculationListener()
         {
             @Override public void preCalculated(ProcessedDatasetPojo data)
             {
                 trainingLog.append("===Begin Calculate Distance===\n");
+
+                trainingCompleteDistanceLog.append("===Begin Calculate Distance===\n");
+                trainingCompleteWeightLog.append("===Process Calculate Distance===\n");
             }
 
             @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
             {
                 trainingLog.append(String.format("Distance [%d, %d] against [%d, %d] resulting %f \n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance()));
+
+                trainingCompleteDistanceLog.append(String.format("Distance %s against %s resulting %f \n", data.toString(), weight.toString(), weight.getDistance()));
             }
 
             @Override public void postCalculated(ProcessedDatasetPojo data)
             {
                 trainingLog.append("===End Calculate Distance===\n");
+
+                trainingCompleteDistanceLog.append("===End Calculate Distance===\n");
             }
         });
         this.lvq.weightUpdateListeners.add(new DebuggableLVQ1.OnWeightUpdateListener()
@@ -102,33 +118,52 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             {
                 trainingLog.append("===Begin Update Weight===\n");
                 trainingLog.append(String.format("Minimum weight distance is [%d, %d, %g] which are %s with data [%d %d] so the weight is move %s the data\n", weight.weight.id, weight.weight.target, weight.getDistance(), sameSignature ? "Same Class" : "Different Class", data.dataset.id, data.dataset.target, sameSignature ? "Closer to" : "Away from"));
+
+                trainingCompleteDistanceLog.append("===Process Update Weight===\n");
+                trainingCompleteWeightLog.append("===Begin Update Weight===\n");
+                trainingCompleteWeightLog.append(String.format("Minimum weight distance is %s which are %s with data %s so the weight is move %s the data\n", weight.toString(), sameSignature ? "Same Class" : "Different Class", data.toString(), sameSignature ? "Closer to" : "Away from"));
             }
 
             @Override public void update(ProcessedWeightPojo<Double> weight)
             {
                 trainingLog.append(String.format("Resulting Weight is : %s\n", weight.toString()));
+
+                trainingCompleteWeightLog.append(String.format("Resulting Weight is : %s\n", weight.toString()));
             }
 
             @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
             {
                 trainingLog.append("===End Update Weight===\n");
+
+                trainingCompleteWeightLog.append("===End Update Weight===\n");
             }
         });
         this.lvq.reducedLearningRateListener.add((lr, lrr, r) -> {
             trainingLog.append("===Begin Reduce Learning Rate===\n");
             trainingLog.append(String.format("Reduce Learning rate [%g] with learning rate reduction component [%f] resulting [%f]\n", lr, lrr, r));
             trainingLog.append("===End Reduce Learning Rate===\n");
+
+            trainingCompleteDistanceLog.append("===Process Reduce Learning Rate===\n");
+            trainingCompleteWeightLog.append("===Process Reduce Learning Rate===\n");
         });
         this.lvq.accuracyListeners.add((s, t, acc) -> {
             trainingLog.append("===Begin Calculate Accuracy===\n");
             trainingLog.append(String.format("The Correct Class is %d of %d resulting %f%%\n", s, t, acc));
             trainingLog.append("===End Calculate Accuracy===\n");
+
+            trainingCompleteDistanceLog.append("===Process Calculate Accuracy===\n");
+            trainingCompleteWeightLog.append("===Process Calculate Accuracy===\n");
         });
         this.lvq.satisfactionEvaluationListeners.add(e -> {
             trainingLog.append("===Begin Satisfaction Evaluation===\n");
             trainingLog.append(String.format("Update Epoch to %d\n", e));
             trainingLog.append("===End Satisfaction Evaluation===\n");
             trainingLog.append(String.format("==End Epoch [%d]==\n\n", e - 1));
+
+            trainingCompleteDistanceLog.append("===Process Satisfaction Evaluation===\n");
+            trainingCompleteDistanceLog.append(String.format("==End Epoch [%d]==\n\n", e - 1));
+            trainingCompleteWeightLog.append("===Process Satisfaction Evaluation===\n");
+            trainingCompleteWeightLog.append(String.format("==End Epoch [%d]==\n\n", e - 1));
         });
 
 
@@ -138,6 +173,9 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             {
                 testingLog.append("==Begin Testing==\n");
                 testingLog.append("===Begin Calculate Distance===\n");
+
+                testingCompleteWeightLog.append("==Begin Testing==\n");
+                testingCompleteWeightLog.append("===Process Calculate Distance===\n");
             }
 
             @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
@@ -156,6 +194,9 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             {
                 testingLog.append("===Begin Classify===\n");
                 testingLog.append(String.format("The closest distance of [%d, %d] is [%d, %d] which are [%g] so the data can be classified as Class [%d]\n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance(), data.actualTarget));
+
+                testingCompleteWeightLog.append("===Begin Classify===\n");
+                testingCompleteWeightLog.append(String.format("The closest distance of %s is %s which are [%g] so the data can be classified as Class [%d]\n", data.toString(), weight.toString(), weight.getDistance(), data.actualTarget));
             }
 
             @Override public void update(ProcessedWeightPojo<Double> weight)
@@ -165,6 +206,8 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
             {
                 testingLog.append("===End Classify===\n");
+
+                testingCompleteWeightLog.append("===End Classify===\n");
             }
         });
         this.lvq.testAccuracyListeners.add((s, t, acc) -> {
@@ -172,6 +215,9 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             testingLog.append(String.format("The Correct Class is %d of %d resulting %f%%\n", s, t, acc));
             testingLog.append("===End Calculate Accuracy===\n");
             testingLog.append("==End Testing==\n");
+
+            testingCompleteWeightLog.append("===Process Calculate Accuracy===\n");
+            testingCompleteWeightLog.append("==End Testing==\n");
         });
     }
 
