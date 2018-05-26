@@ -21,6 +21,9 @@ public class DebuggableLVQ1 extends LVQ1
     public final List<OnPostSatisfactionListener> postSatisfactionListeners = new LinkedList<>();
     public final List<OnDistanceCalculationListener> distanceCalculationListener = new LinkedList<>();
     public final List<OnWeightUpdateListener> weightUpdateListeners = new LinkedList<>();
+    public final List<OnPostReducedLearningRateListener> reducedLearningRateListener = new LinkedList<>();
+    public final List<OnPostCalculateAccuracyListener> accuracyListeners = new LinkedList<>();
+    public final List<OnPostSatisfactionEvaluationListener> satisfactionEvaluationListeners = new LinkedList<>();
 
     public DebuggableLVQ1(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedDatasetPojo> dataset, List<ProcessedWeightPojo<Double>> weight)
     {
@@ -96,6 +99,26 @@ public class DebuggableLVQ1 extends LVQ1
         }
     }
 
+    @Override public void reduceLearningRate()
+    {
+        double result = (this.learningRate * this.lrReduction);
+        this.reducedLearningRateListener.forEach(l -> l.reduceLearningRate(this.learningRate, this.lrReduction, result));
+        this.learningRate = result;
+    }
+
+    @Override public double calculateAccuracy(List<ProcessedDatasetPojo> dataset)
+    {
+        double accuracy = super.calculateAccuracy(dataset);
+        this.accuracyListeners.forEach(l -> l.calculateAccuracy(accuracy));
+        return accuracy;
+    }
+
+    @Override public void evaluateSatisfaction()
+    {
+        super.evaluateSatisfaction();
+        this.satisfactionEvaluationListeners.forEach(l -> l.evaluateSatisfaction(this.counter + 1));
+    }
+
     public interface OnPostInitializationListener
     {
         void postInitialization(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedWeightPojo<Double>> dataset, List<ProcessedDatasetPojo> weight);
@@ -122,5 +145,20 @@ public class DebuggableLVQ1 extends LVQ1
         void update(ProcessedWeightPojo<Double> weight);
 
         void postUpdate(ProcessedWeightPojo<Double> weight);
+    }
+
+    public interface OnPostReducedLearningRateListener
+    {
+        void reduceLearningRate(double learningRate, double lrReduction, double result);
+    }
+
+    public interface OnPostCalculateAccuracyListener
+    {
+        void calculateAccuracy(double accuracy);
+    }
+
+    public interface OnPostSatisfactionEvaluationListener
+    {
+        void evaluateSatisfaction(int counter);
     }
 }
