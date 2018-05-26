@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.text.DefaultCaret;
 
 /**
  * @author Entra
@@ -42,6 +43,9 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     {
         this.listener = listener;
         initComponents();
+        DefaultCaret caret = (DefaultCaret) this.jTextArea1.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
         this.initializeDataObserver();
         this.initTable();
         this.initializeLVQ(this.listener.getLVQ());
