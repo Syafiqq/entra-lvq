@@ -108,8 +108,9 @@ public class DebuggableLVQ1 extends LVQ1
 
     @Override public double calculateAccuracy(List<ProcessedDatasetPojo> dataset)
     {
-        double accuracy = super.calculateAccuracy(dataset);
-        this.accuracyListeners.forEach(l -> l.calculateAccuracy(accuracy));
+        int same = (int) dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count();
+        double accuracy = same * 1.0f / dataset.size() * 100.f;
+        this.accuracyListeners.forEach(l -> l.calculateAccuracy(same, super.dataset.size(), accuracy));
         return accuracy;
     }
 
@@ -154,7 +155,7 @@ public class DebuggableLVQ1 extends LVQ1
 
     public interface OnPostCalculateAccuracyListener
     {
-        void calculateAccuracy(double accuracy);
+        void calculateAccuracy(int same, int size, double accuracy);
     }
 
     public interface OnPostSatisfactionEvaluationListener
