@@ -5,18 +5,52 @@
  */
 package com.github.syafiqq.entra.lvq.view;
 
+import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
+import java.util.Observer;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.text.DefaultCaret;
+
 /**
  * @author Entra
  */
 public class JarakTestingFrame extends ClosableInternalFrame
 {
+    InteractionListener listener;
+    private Observer logObserver;
 
     /**
      * Creates new form JarakTestingFrame
      */
-    public JarakTestingFrame()
+    public JarakTestingFrame(InteractionListener listener)
     {
+        this.listener = listener;
         initComponents();
+        DefaultCaret caret = (DefaultCaret) this.jTextArea1.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        this.initializeDataObserver();
+        this.addInternalFrameListener(new COpenClosableInternalFrameListener()
+        {
+            @Override public void internalFrameOpened(InternalFrameEvent e)
+            {
+                JarakTestingFrame.this.listener.getJarakTesting().addObserver(JarakTestingFrame.this.logObserver);
+                JarakTestingFrame.this.callObserver();
+            }
+
+            @Override public void internalFrameClosed(InternalFrameEvent e)
+            {
+                JarakTestingFrame.this.listener.getJarakTesting().deleteObserver(JarakTestingFrame.this.logObserver);
+            }
+        });
+    }
+
+    private void callObserver()
+    {
+        this.jTextArea1.setText(this.listener.getJarakTesting().builder.toString());
+    }
+
+    private void initializeDataObserver()
+    {
+        this.logObserver = (o, arg) -> this.jTextArea1.setText(arg.toString());
     }
 
     /**
@@ -60,6 +94,10 @@ public class JarakTestingFrame extends ClosableInternalFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public interface InteractionListener
+    {
+        OStringBuilder getJarakTesting();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
