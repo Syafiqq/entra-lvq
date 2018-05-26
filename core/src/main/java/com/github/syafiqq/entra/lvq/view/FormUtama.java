@@ -86,7 +86,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
 
             @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
             {
-                trainingLog.append(String.format("Distance %s against %s resulting %f \n", data.toString(), weight.toString(), weight.getDistance()));
+                trainingLog.append(String.format("Distance [%d, %d] against [%d, %d] resulting %f \n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance()));
             }
 
             @Override public void postCalculated(ProcessedDatasetPojo data)
