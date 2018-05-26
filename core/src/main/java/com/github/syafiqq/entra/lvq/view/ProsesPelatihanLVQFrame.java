@@ -59,6 +59,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().weightUpdateListeners.add(ProsesPelatihanLVQFrame.this.weightObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().distanceCalculationListener.add(ProsesPelatihanLVQFrame.this.datasetObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().accuracyListeners.add(ProsesPelatihanLVQFrame.this.accuracyObserver);
+                ProsesPelatihanLVQFrame.this.callObserver();
             }
 
             @Override public void internalFrameClosed(InternalFrameEvent e)
@@ -69,7 +70,6 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().accuracyListeners.remove(ProsesPelatihanLVQFrame.this.accuracyObserver);
             }
         });
-        this.callObserver();
     }
 
     private void callObserver()
