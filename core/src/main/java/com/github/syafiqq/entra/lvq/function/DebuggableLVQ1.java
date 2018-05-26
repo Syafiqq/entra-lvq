@@ -97,7 +97,9 @@ public class DebuggableLVQ1 extends LVQ1
 
             }
             this.reduceLearningRate();
-            this.calculateAccuracy(this.dataset);
+            int same = (int) dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count();
+            double accuracy = same * 1.0f / dataset.size() * 100.f;
+            this.accuracyListeners.forEach(l -> l.calculateAccuracy(same, super.dataset.size(), this.calculateAccuracy(this.dataset)));
             this.evaluateSatisfaction();
             try
             {
@@ -135,14 +137,6 @@ public class DebuggableLVQ1 extends LVQ1
         double result = (this.learningRate * this.lrReduction);
         this.reducedLearningRateListener.forEach(l -> l.reduceLearningRate(this.learningRate, this.lrReduction, result));
         this.learningRate = result;
-    }
-
-    @Override public double calculateAccuracy(List<ProcessedDatasetPojo> dataset)
-    {
-        int same = (int) dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count();
-        double accuracy = same * 1.0f / dataset.size() * 100.f;
-        this.accuracyListeners.forEach(l -> l.calculateAccuracy(same, super.dataset.size(), accuracy));
-        return accuracy;
     }
 
     @Override public void evaluateSatisfaction()
