@@ -18,6 +18,9 @@ public class DebuggableLVQ1 extends LVQ1
     private final List<ProcessedDatasetPojo> pTesting;
     private final List<ProcessedWeightPojo<Double>> pWeight;
 
+    public final List<OnTrainingListener> trainingListeners = new LinkedList<>();
+    public final List<OnTestingListener> testingListeners = new LinkedList<>();
+
     public final List<OnPostInitializationListener> postInitializeListener = new LinkedList<>();
     public final List<OnPostSatisfactionListener> postSatisfactionListeners = new LinkedList<>();
     public final List<OnDistanceCalculationListener> distanceCalculationListener = new LinkedList<>();
@@ -81,6 +84,7 @@ public class DebuggableLVQ1 extends LVQ1
 
     @Override public void training()
     {
+        this.trainingListeners.forEach(l -> l.doTrain(this.pDataset, this.pWeight));
         this.counter = 0;
         this.initialization();
         while(!this.isSatisfied())
@@ -126,6 +130,7 @@ public class DebuggableLVQ1 extends LVQ1
 
     @Override public void testing(List<ProcessedDatasetPojo> testing)
     {
+        this.testingListeners.forEach(l -> l.doTest(this.pTesting, this.pWeight));
         for(ProcessedDatasetPojo data : testing)
         {
             this.testDistanceCalculationListener.forEach(l -> l.preCalculated(data));
@@ -163,6 +168,16 @@ public class DebuggableLVQ1 extends LVQ1
     public List<ProcessedDatasetPojo> getTesting()
     {
         return pTesting;
+    }
+
+    public interface OnTrainingListener
+    {
+        void doTrain(List<ProcessedDatasetPojo> train, List<ProcessedWeightPojo<Double>> weight);
+    }
+
+    public interface OnTestingListener
+    {
+        void doTest(List<ProcessedDatasetPojo> test, List<ProcessedWeightPojo<Double>> weight);
     }
 
     public interface OnPostInitializationListener
