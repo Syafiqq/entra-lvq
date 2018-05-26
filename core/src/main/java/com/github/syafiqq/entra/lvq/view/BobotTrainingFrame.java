@@ -5,18 +5,53 @@
  */
 package com.github.syafiqq.entra.lvq.view;
 
+import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
+import java.util.Observer;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.text.DefaultCaret;
+
 /**
  * @author Entra
  */
 public class BobotTrainingFrame extends ClosableInternalFrame
 {
+    InteractionListener listener;
+    private Observer logObserver;
 
     /**
      * Creates new form BobotTrainingFrame
      */
-    public BobotTrainingFrame()
+    public BobotTrainingFrame(InteractionListener listener)
     {
+        this.listener = listener;
         initComponents();
+        DefaultCaret caret = (DefaultCaret) this.jTextArea1.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+        this.initializeDataObserver();
+        this.addInternalFrameListener(new COpenClosableInternalFrameListener()
+        {
+            @Override public void internalFrameOpened(InternalFrameEvent e)
+            {
+                BobotTrainingFrame.this.listener.getBobotTrainingLog().addObserver(BobotTrainingFrame.this.logObserver);
+                BobotTrainingFrame.this.callObserver();
+            }
+
+            @Override public void internalFrameClosed(InternalFrameEvent e)
+            {
+                BobotTrainingFrame.this.listener.getBobotTrainingLog().deleteObserver(BobotTrainingFrame.this.logObserver);
+            }
+        });
+    }
+
+    private void callObserver()
+    {
+        this.jTextArea1.setText(this.listener.getBobotTrainingLog().builder.toString());
+    }
+
+
+    private void initializeDataObserver()
+    {
+        this.logObserver = (o, arg) -> this.jTextArea1.setText(arg.toString());
     }
 
     /**
@@ -60,6 +95,10 @@ public class BobotTrainingFrame extends ClosableInternalFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public interface InteractionListener
+    {
+        OStringBuilder getBobotTrainingLog();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
