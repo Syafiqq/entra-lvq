@@ -45,7 +45,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     public OStringBuilder testingLog = new OStringBuilder(new StringBuilder());
     public OStringBuilder trainingCompleteDistanceLog = new OStringBuilder(new StringBuilder());
     public OStringBuilder trainingCompleteWeightLog = new OStringBuilder(new StringBuilder());
-    public OStringBuilder testingCompleteWeightLog = new OStringBuilder(new StringBuilder());
+    public OStringBuilder testingCompleteDistanceLog = new OStringBuilder(new StringBuilder());
     private DebuggableLVQ1 lvq;
 
     /**
@@ -177,18 +177,22 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
                 testingLog.append("==Begin Testing==\n");
                 testingLog.append("===Begin Calculate Distance===\n");
 
-                testingCompleteWeightLog.append("==Begin Testing==\n");
-                testingCompleteWeightLog.append("===Process Calculate Distance===\n");
+                testingCompleteDistanceLog.append("==Begin Testing==\n");
+                testingCompleteDistanceLog.append("===Begin Calculate Distance===\n");
             }
 
             @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
             {
                 testingLog.append(String.format("Distance [%d, %d] against [%d, %d] resulting %f \n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance()));
+
+                testingCompleteDistanceLog.append(String.format("Distance %s against %s resulting %f \n", data.toString(), weight.toString(), weight.getDistance()));
             }
 
             @Override public void postCalculated(ProcessedDatasetPojo data)
             {
                 testingLog.append("===End Calculate Distance===\n");
+
+                testingCompleteDistanceLog.append("===End Calculate Distance===\n");
             }
         });
         this.lvq.testWeightUpdateListeners.add(new DebuggableLVQ1.OnWeightUpdateListener()
@@ -198,8 +202,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
                 testingLog.append("===Begin Classify===\n");
                 testingLog.append(String.format("The closest distance of [%d, %d] is [%d, %d] which are [%g] so the data can be classified as Class [%d]\n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance(), data.actualTarget));
 
-                testingCompleteWeightLog.append("===Begin Classify===\n");
-                testingCompleteWeightLog.append(String.format("The closest distance of %s is %s which are [%g] so the data can be classified as Class [%d]\n", data.toString(), weight.toString(), weight.getDistance(), data.actualTarget));
+                testingCompleteDistanceLog.append("===Process Classify===\n");
             }
 
             @Override public void update(ProcessedWeightPojo<Double> weight)
@@ -209,8 +212,6 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
             {
                 testingLog.append("===End Classify===\n");
-
-                testingCompleteWeightLog.append("===End Classify===\n");
             }
         });
         this.lvq.testAccuracyListeners.add((s, t, acc) -> {
@@ -219,8 +220,8 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             testingLog.append("===End Calculate Accuracy===\n");
             testingLog.append("==End Testing==\n");
 
-            testingCompleteWeightLog.append("===Process Calculate Accuracy===\n");
-            testingCompleteWeightLog.append("==End Testing==\n");
+            testingCompleteDistanceLog.append("===Process Calculate Accuracy===\n");
+            testingCompleteDistanceLog.append("==End Testing==\n");
         });
     }
 
@@ -722,7 +723,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
 
     @Override public OStringBuilder getJarakTesting()
     {
-        return this.testingCompleteWeightLog;
+        return this.testingCompleteDistanceLog;
     }
 
     private void setTopAndActivate(JInternalFrame frame) throws PropertyVetoException
