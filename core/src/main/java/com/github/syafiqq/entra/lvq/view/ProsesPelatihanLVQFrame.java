@@ -8,6 +8,7 @@ package com.github.syafiqq.entra.lvq.view;
 import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
 import com.github.syafiqq.entra.lvq.function.model.EuclideanWeightPojo;
 import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
@@ -31,6 +32,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
 {
     InteractionListener listener;
     private Observer logObserver;
+    private DebuggableLVQ1.OnWeightUpdateListener weightObserver;
 
     /**
      * Creates new form ProsesPelatihanLVQFrame
@@ -48,11 +50,13 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
             @Override public void internalFrameOpened(InternalFrameEvent e)
             {
                 ProsesPelatihanLVQFrame.this.listener.getOTrainingLog().addObserver(ProsesPelatihanLVQFrame.this.logObserver);
+                ProsesPelatihanLVQFrame.this.listener.getLVQ().weightUpdateListeners.add(ProsesPelatihanLVQFrame.this.weightObserver);
             }
 
             @Override public void internalFrameClosed(InternalFrameEvent e)
             {
                 ProsesPelatihanLVQFrame.this.listener.getOTrainingLog().deleteObserver(ProsesPelatihanLVQFrame.this.logObserver);
+                ProsesPelatihanLVQFrame.this.listener.getLVQ().weightUpdateListeners.remove(ProsesPelatihanLVQFrame.this.weightObserver);
             }
         });
         this.callObserver();
@@ -98,6 +102,34 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     private void initializeDataObserver()
     {
         this.logObserver = (o, arg) -> this.jTextArea1.setText(arg.toString());
+        this.weightObserver = new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+                final DefaultTableModel weightTable = (DefaultTableModel) ProsesPelatihanLVQFrame.this.bobotawalTable.getModel();
+                int index = ProsesPelatihanLVQFrame.this.listener.getLVQ().getWeight().indexOf(weight);
+                int i = 0;
+                int c = -1;
+                weightTable.setValueAt(weight.weight.id, index, ++c);
+                for(String idx : Settings.columns)
+                {
+                    weightTable.setValueAt(weight.vector(idx), index, ++c);
+                }
+                weightTable.setValueAt(weight.weight.target, index, ++c);
+                ++i;
+                weightTable.fireTableDataChanged();
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+        };
     }
 
     private void initTable()
