@@ -18,6 +18,7 @@ public class DebuggableLVQ1 extends LVQ1
     private final List<ProcessedWeightPojo<Double>> pWeight;
 
     public final List<OnPostInitializationListener> postInitializeListener = new LinkedList<>();
+    public final List<OnPostSatisfactionListener> postSatisfactionListeners = new LinkedList<>();
 
     public DebuggableLVQ1(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedDatasetPojo> dataset, List<ProcessedWeightPojo<Double>> weight)
     {
@@ -51,8 +52,20 @@ public class DebuggableLVQ1 extends LVQ1
         this.postInitializeListener.forEach(l -> l.postInitialization(super.learningRate, super.lrReduction, super.lrThreshold, super.maxIteration, super.weight, super.dataset));
     }
 
+    @Override public boolean isSatisfied()
+    {
+        boolean satisfied = super.isSatisfied();
+        this.postSatisfactionListeners.forEach(s -> s.postSatisfaction(super.counter + 1, super.maxIteration + 1, super.learningRate, super.lrThreshold, satisfied));
+        return satisfied;
+    }
+
     public interface OnPostInitializationListener
     {
         void postInitialization(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedWeightPojo<Double>> dataset, List<ProcessedDatasetPojo> weight);
+    }
+
+    public interface OnPostSatisfactionListener
+    {
+        void postSatisfaction(int epoch, int maxEpoch, double learningRate, double lrThreshold, boolean result);
     }
 }
