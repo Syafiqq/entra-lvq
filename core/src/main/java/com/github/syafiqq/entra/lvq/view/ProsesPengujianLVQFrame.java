@@ -67,6 +67,7 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
         this.testinglvqTextArea.setText(this.listener.getOTestingLog().builder.toString());
         this.repopulateTable(this.listener.getLVQ().getTesting(), this.listener.getLVQ().getWeight());
         this.jTextField2.setText(String.format("%f", this.listener.getLVQ().calculateAccuracy(this.listener.getLVQ().getTesting())));
+        this.jTextField1.setText(String.format("%d", this.listener.getLVQ().getTesting().stream().filter(ProcessedDatasetPojo::isSameClass).count()));
     }
 
     private void repopulateTable(List<ProcessedDatasetPojo> testing, List<ProcessedWeightPojo<Double>> weight)
@@ -142,7 +143,10 @@ public class ProsesPengujianLVQFrame extends ClosableInternalFrame
                 datasetTable.fireTableDataChanged();
             }
         };
-        this.accuracyObserver = (same, size, accuracy) -> this.jTextField2.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
+        this.accuracyObserver = (same, size, accuracy) -> {
+            this.jTextField2.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
+            this.jTextField1.setText(Integer.toString(same));
+        };
         this.testObserver = this::repopulateTable;
     }
 
