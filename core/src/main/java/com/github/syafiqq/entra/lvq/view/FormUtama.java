@@ -155,7 +155,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
             @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
             {
                 testingLog.append("===Begin Classify===\n");
-                testingLog.append(String.format("The closest distance of [%d %d] is [%d, %d] which are [%g] so the data can be classified as Class [%d]\n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance(), data.actualTarget));
+                testingLog.append(String.format("The closest distance of [%d, %d] is [%d, %d] which are [%g] so the data can be classified as Class [%d]\n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance(), data.actualTarget));
             }
 
             @Override public void update(ProcessedWeightPojo<Double> weight)
