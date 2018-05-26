@@ -60,6 +60,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().weightUpdateListeners.add(ProsesPelatihanLVQFrame.this.weightObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().distanceCalculationListener.add(ProsesPelatihanLVQFrame.this.datasetObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().accuracyListeners.add(ProsesPelatihanLVQFrame.this.accuracyObserver);
+                ProsesPelatihanLVQFrame.this.listener.getLVQ().trainingListeners.add(ProsesPelatihanLVQFrame.this.trainObserver);
                 ProsesPelatihanLVQFrame.this.callObserver();
             }
 
@@ -69,6 +70,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().weightUpdateListeners.remove(ProsesPelatihanLVQFrame.this.weightObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().distanceCalculationListener.remove(ProsesPelatihanLVQFrame.this.datasetObserver);
                 ProsesPelatihanLVQFrame.this.listener.getLVQ().accuracyListeners.remove(ProsesPelatihanLVQFrame.this.accuracyObserver);
+                ProsesPelatihanLVQFrame.this.listener.getLVQ().trainingListeners.remove(ProsesPelatihanLVQFrame.this.trainObserver);
             }
         });
     }
