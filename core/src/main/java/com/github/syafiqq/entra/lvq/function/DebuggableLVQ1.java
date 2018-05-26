@@ -51,7 +51,7 @@ public class DebuggableLVQ1 extends LVQ1
         this.postInitializeListener.forEach(l -> l.postInitialization(super.learningRate, super.lrReduction, super.lrThreshold, super.maxIteration, super.weight, super.dataset));
     }
 
-    interface OnPostInitializationListener
+    public interface OnPostInitializationListener
     {
         void postInitialization(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedWeightPojo<Double>> dataset, List<ProcessedDatasetPojo> weight);
     }
