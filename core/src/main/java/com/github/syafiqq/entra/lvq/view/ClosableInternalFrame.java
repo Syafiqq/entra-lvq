@@ -3,13 +3,8 @@ package com.github.syafiqq.entra.lvq.view;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
 
-interface CClosableInternalFrameListener extends InternalFrameListener
+interface COpenClosableInternalFrameListener extends InternalFrameListener
 {
-    default @Override void internalFrameOpened(InternalFrameEvent e)
-    {
-
-    }
-
     default @Override void internalFrameClosing(InternalFrameEvent e)
     {
 
@@ -31,6 +26,14 @@ interface CClosableInternalFrameListener extends InternalFrameListener
     }
 
     default @Override void internalFrameDeactivated(InternalFrameEvent e)
+    {
+
+    }
+}
+
+interface CClosableInternalFrameListener extends COpenClosableInternalFrameListener
+{
+    default @Override void internalFrameOpened(InternalFrameEvent e)
     {
 
     }
