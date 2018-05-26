@@ -160,6 +160,11 @@ public class DebuggableLVQ1 extends LVQ1
         this.satisfactionEvaluationListeners.forEach(l -> l.evaluateSatisfaction(this.counter + 1));
     }
 
+    public List<ProcessedDatasetPojo> getTesting()
+    {
+        return pTesting;
+    }
+
     public interface OnPostInitializationListener
     {
         void postInitialization(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedWeightPojo<Double>> dataset, List<ProcessedDatasetPojo> weight);
