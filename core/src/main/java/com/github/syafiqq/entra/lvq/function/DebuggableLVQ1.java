@@ -25,6 +25,9 @@ public class DebuggableLVQ1 extends LVQ1
     public final List<OnPostCalculateAccuracyListener> accuracyListeners = new LinkedList<>();
     public final List<OnPostSatisfactionEvaluationListener> satisfactionEvaluationListeners = new LinkedList<>();
 
+    public final List<OnDistanceCalculationListener> testDistanceCalculationListener = new LinkedList<>();
+    public final List<OnWeightUpdateListener> testWeightUpdateListeners = new LinkedList<>();
+
     public DebuggableLVQ1(double learningRate, double lrReduction, double lrThreshold, int maxIteration, List<ProcessedDatasetPojo> dataset, List<ProcessedWeightPojo<Double>> weight)
     {
         super(learningRate, lrReduction, lrThreshold, maxIteration);
@@ -104,6 +107,26 @@ public class DebuggableLVQ1 extends LVQ1
             {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override public void testing(List<ProcessedDatasetPojo> testing)
+    {
+        for(ProcessedDatasetPojo data : testing)
+        {
+            this.testDistanceCalculationListener.forEach(l -> l.preCalculated(data));
+            for(ProcessedWeightPojo<Double> w : this.weight)
+            {
+                w.calculateDistance(data);
+                this.testDistanceCalculationListener.forEach(l -> l.calculated(data, w));
+
+            }
+            final ProcessedWeightPojo<Double> min = this.findMinimum(this.weight);
+            this.testDistanceCalculationListener.forEach(l -> l.postCalculated(data));
+            this.testWeightUpdateListeners.forEach(l -> l.preUpdate(data, min, min.isSameSignature(data)));
+            min.isSameSignature(data);
+            this.testWeightUpdateListeners.forEach(l -> l.update(min));
+            this.testWeightUpdateListeners.forEach(l -> l.postUpdate(min));
         }
     }
 
