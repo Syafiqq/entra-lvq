@@ -78,6 +78,12 @@ public class LVQ1 extends LVQ<Double>
         }
     }
 
+    @Override public void training()
+    {
+        this.counter = 0;
+        super.training();
+    }
+
     @Override public double calculateAccuracy(List<ProcessedDatasetPojo> dataset)
     {
         return (double) (dataset.stream().filter(ProcessedDatasetPojo::isSameClass).count() * 1.0f / dataset.size() * 100.f);
