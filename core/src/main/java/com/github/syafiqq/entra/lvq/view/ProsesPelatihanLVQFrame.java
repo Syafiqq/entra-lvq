@@ -10,15 +10,18 @@ import com.github.syafiqq.entra.lvq.function.model.EuclideanWeightPojo;
 import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
+import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
 import com.github.syafiqq.entra.lvq.util.Settings;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Observer;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.event.InternalFrameEvent;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,6 +30,7 @@ import javax.swing.table.DefaultTableModel;
 public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
 {
     InteractionListener listener;
+    private Observer logObserver;
 
     /**
      * Creates new form ProsesPelatihanLVQFrame
@@ -36,8 +40,32 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
     {
         this.listener = listener;
         initComponents();
+        this.initializeDataObserver();
         this.initTable();
         this.initializeLVQ(this.listener.getLVQ());
+        this.addInternalFrameListener(new COpenClosableInternalFrameListener()
+        {
+            @Override public void internalFrameOpened(InternalFrameEvent e)
+            {
+                ProsesPelatihanLVQFrame.this.listener.getOTrainingLog().addObserver(ProsesPelatihanLVQFrame.this.logObserver);
+            }
+
+            @Override public void internalFrameClosed(InternalFrameEvent e)
+            {
+                ProsesPelatihanLVQFrame.this.listener.getOTrainingLog().deleteObserver(ProsesPelatihanLVQFrame.this.logObserver);
+            }
+        });
+        this.callObserver();
+    }
+
+    private void callObserver()
+    {
+        this.jTextArea1.setText(this.listener.getOTrainingLog().builder.toString());
+    }
+
+    private void initializeDataObserver()
+    {
+        this.logObserver = (o, arg) -> this.jTextArea1.setText(arg.toString());
     }
 
     private void initTable()
@@ -555,7 +583,7 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         final DebuggableLVQ1 lvq = this.listener.getLVQ();
         lvq.setSetting(learningRate, decLR, minLR, epoch);
         lvq.setData(selectedDataset.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()), selectedWeight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()));
-        lvq.training();
+        this.listener.beginTraining();
     }
 
 
@@ -568,6 +596,10 @@ public class ProsesPelatihanLVQFrame extends ClosableInternalFrame
         DebuggableLVQ1 getLVQ();
 
         List<WeightPojo> getWeight();
+
+        void beginTraining();
+
+        OStringBuilder getOTrainingLog();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
