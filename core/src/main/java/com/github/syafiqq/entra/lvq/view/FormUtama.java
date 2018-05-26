@@ -13,6 +13,7 @@ import com.github.syafiqq.entra.lvq.model.database.dao.DatasetDao;
 import com.github.syafiqq.entra.lvq.model.database.dao.WeightDao;
 import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
 import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
+import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
 import com.github.syafiqq.entra.lvq.observable.java.util.OList;
 import com.github.syafiqq.entra.lvq.util.Settings;
 import java.beans.PropertyVetoException;
@@ -36,6 +37,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
     private OList<ProcessedWeightPojo<Double>> oWeight;
+    public OStringBuilder trainingLog = new OStringBuilder(new StringBuilder());
     private DebuggableLVQ1 lvq;
 
     /**
@@ -47,9 +49,34 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         this.weight = new OList<>(new LinkedList<>(WeightDao.getAll(Settings.DB)));
         this.oDataset = new OList<>(new LinkedList<>(this.dataset.lists.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList())));
         this.oWeight = new OList<>(new LinkedList<>(this.weight.lists.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList())));
-        this.lvq = new DebuggableLVQ1(0, 0, 0, 0, this.oDataset.lists, this.oWeight.lists);
+        this.lvq = new DebuggableLVQ1(0.5, 0.01, 1e-11, 5, this.oDataset.lists, this.oWeight.lists);
+        this.addLVQListener();
         initComponents();
         setExtendedState(MAXIMIZED_BOTH);
+    }
+
+    private void addLVQListener()
+    {
+        this.lvq.postInitializeListener.add((learningRate, lrReduction, lrThreshold, maxIteration, weight, dataset) -> {
+            trainingLog.append("\n==Begin Initialization Phase==\n");
+            trainingLog.append(String.format("Learning Rate           = %f\n", learningRate));
+            trainingLog.append(String.format("Learning Rate Reduction = %f\n", lrReduction));
+            trainingLog.append(String.format("Learning Rate Threshold = %g\n", lrThreshold));
+            trainingLog.append(String.format("Iteration               = %d\n", maxIteration));
+            trainingLog.append("=Dataset=\n");
+            dataset.forEach(d -> trainingLog.append(String.format("%s\n", d)));
+            trainingLog.append("=Bobot=\n");
+            weight.forEach(w -> trainingLog.append(String.format("%s\n", w)));
+            trainingLog.append("==End Initialization Phase==\n");
+        });
+        this.lvq.postSatisfactionListeners.add((epoch, maxEpoch, learningRate, maxLearningRate, result) -> {
+            trainingLog.append(String.format("\n==Begin Epoch [%d] ==\n", epoch));
+            trainingLog.append("===Begin Check Satisfaction===\n");
+            trainingLog.append(String.format("Iteration %d of %d\n", epoch, maxEpoch));
+            trainingLog.append(String.format("LearningRate %g of %g\n", learningRate, maxLearningRate));
+            trainingLog.append(String.format("Result %s\n", result ? "Satisfied" : "Not Satisfied"));
+            trainingLog.append("===End Check Satisfaction===\n");
+        });
     }
 
     /**
@@ -503,6 +530,17 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     @Override public List<WeightPojo> getWeight()
     {
         return this.weight.lists;
+    }
+
+    @Override public void beginTraining()
+    {
+        this.trainingLog.setLength(0);
+        new Thread(lvq::training).start();
+    }
+
+    @Override public OStringBuilder getOTrainingLog()
+    {
+        return trainingLog;
     }
 
     private void setTopAndActivate(JInternalFrame frame) throws PropertyVetoException
