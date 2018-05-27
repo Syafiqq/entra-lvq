@@ -42,6 +42,39 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
         this.initTable();
     }
 
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField accuracy;
+    private javax.swing.JTextField epoch;
+    private javax.swing.JComboBox<String> learningrate;
+    private javax.swing.JTextField lrdec;
+
+    public interface InteractionListener
+    {
+    }
+
+    private javax.swing.JTextField lrmin;
+    private javax.swing.JButton process;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField sameclass;
+    private javax.swing.JTable tbtraining;
+    private javax.swing.JTable tbweight;
+    private javax.swing.JComboBox<String> training;
+
     private void initializeDataObserver()
     {
         this.weightObserver = new DebuggableLVQ1.OnWeightUpdateListener()
@@ -53,7 +86,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
 
             @Override public void update(ProcessedWeightPojo<Double> weight)
             {
-                final DefaultTableModel weightTable = (DefaultTableModel) PengujianAlphaFrame.this.jTable2.getModel();
+                final DefaultTableModel weightTable = (DefaultTableModel) PengujianAlphaFrame.this.tbweight.getModel();
                 int index = lvq.getWeight().indexOf(weight);
                 int i = 0;
                 int c = 0;
@@ -85,7 +118,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
 
             @Override public void postCalculated(ProcessedDatasetPojo data)
             {
-                final DefaultTableModel datasetTable = (DefaultTableModel) PengujianAlphaFrame.this.jTable1.getModel();
+                final DefaultTableModel datasetTable = (DefaultTableModel) PengujianAlphaFrame.this.tbtraining.getModel();
                 int index = lvq.getDataset().indexOf(data);
                 int i = 0;
                 int c = 22;
@@ -94,13 +127,13 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                 datasetTable.fireTableDataChanged();
             }
         };
-        this.accuracyObserver = (same, size, accuracy) -> this.jTextField1.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
+        this.accuracyObserver = (same, size, accuracy) -> this.accuracy.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
         this.trainObserver = this::repopulateTable;
     }
 
     private void repopulateTable(List<ProcessedDatasetPojo> train, List<ProcessedWeightPojo<Double>> weight)
     {
-        final DefaultTableModel datasetTable = (DefaultTableModel) this.jTable1.getModel();
+        final DefaultTableModel datasetTable = (DefaultTableModel) this.tbtraining.getModel();
         datasetTable.setRowCount(0);
         train.forEach(dt -> {
             Object[] data = new Object[24];
@@ -118,7 +151,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
         });
         datasetTable.fireTableDataChanged();
 
-        final DefaultTableModel weightTable = (DefaultTableModel) this.jTable2.getModel();
+        final DefaultTableModel weightTable = (DefaultTableModel) this.tbweight.getModel();
         weightTable.setRowCount(0);
         weight.forEach(dt -> {
             Object[] data = new Object[23];
@@ -138,12 +171,12 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
 
     private void initTable()
     {
-        this.jTable1.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target", "Aktual-Target"}));
-        this.jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        this.jScrollPane2.setViewportView(this.jTable1);
-        this.jTable2.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target"}));
-        this.jTable2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        this.jScrollPane3.setViewportView(this.jTable2);
+        this.tbtraining.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target", "Aktual-Target"}));
+        this.tbtraining.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.jScrollPane2.setViewportView(this.tbtraining);
+        this.tbweight.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target"}));
+        this.tbweight.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.jScrollPane3.setViewportView(this.tbweight);
     }
 
     /**
@@ -157,31 +190,31 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
     {
 
         jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        training = new javax.swing.JComboBox<>();
+        learningrate = new javax.swing.JComboBox<>();
+        lrdec = new javax.swing.JTextField();
+        lrmin = new javax.swing.JTextField();
+        epoch = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        process = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        sameclass = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        accuracy = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbtraining = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tbweight = new javax.swing.JTable();
 
         setClosable(true);
         setMaximizable(true);
@@ -189,9 +222,9 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Parameter Pengujian"));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"10", "20", "30", "40", "50", "60", "70", "80", "90"}));
+        training.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"10", "20", "30", "40", "50", "60", "70", "80", "90"}));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"}));
+        learningrate.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"}));
 
         jLabel1.setText("Data Latih (%)");
 
@@ -203,7 +236,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
 
         jLabel5.setText("Iterasi Maksimum (MaxEpoh)");
 
-        jButton1.setText("Proses");
+        process.setText("Proses");
 
         jButton2.setText("Ulang Proses");
 
@@ -223,13 +256,13 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                                                                                                                          .addComponent(jLabel5))
                                                                                                   .addGap(18, 18, 18)
                                                                                                   .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                                                                                         .addComponent(jTextField2)
-                                                                                                                         .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                         .addComponent(jComboBox2, javax.swing.GroupLayout.Alignment.LEADING, 0, 69, Short.MAX_VALUE)
-                                                                                                                         .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                                                                         .addComponent(jTextField3)))
+                                                                                                                         .addComponent(lrmin)
+                                                                                                                         .addComponent(lrdec, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                         .addComponent(learningrate, javax.swing.GroupLayout.Alignment.LEADING, 0, 69, Short.MAX_VALUE)
+                                                                                                                         .addComponent(training, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                                                                         .addComponent(epoch)))
                                                                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                                                                                  .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                  .addComponent(process, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                                   .addGap(42, 42, 42)
                                                                                                   .addComponent(jButton2)))
                                                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -239,27 +272,27 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                              .addGroup(jPanel1Layout.createSequentialGroup()
                                                     .addContainerGap()
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                           .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                           .addComponent(training, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                            .addComponent(jLabel1))
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                           .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                           .addComponent(learningrate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                            .addComponent(jLabel2))
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                           .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                           .addComponent(lrdec, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                            .addComponent(jLabel3))
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                           .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                           .addComponent(lrmin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                            .addComponent(jLabel4))
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                           .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                           .addComponent(epoch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                            .addComponent(jLabel5))
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                           .addComponent(jButton1)
+                                                                           .addComponent(process)
                                                                            .addComponent(jButton2))
                                                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -285,11 +318,11 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                                                                            .addGroup(jPanel2Layout.createSequentialGroup()
                                                                                                   .addComponent(jLabel6)
                                                                                                   .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                                  .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                  .addComponent(sameclass, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                                   .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                                                                   .addComponent(jLabel7)
                                                                                                   .addGap(18, 18, 18)
-                                                                                                  .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                                                  .addComponent(accuracy, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                                     .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -300,15 +333,15 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                                            .addComponent(jLabel6)
-                                                                           .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                           .addComponent(sameclass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                            .addComponent(jLabel7)
-                                                                           .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                           .addComponent(accuracy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                     .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Tabel Data"));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbtraining.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
                         {null, null, null, null},
                         {null, null, null, null},
@@ -319,7 +352,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                         "Title 1", "Title 2", "Title 3", "Title 4"
                 }
         ));
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPane2.setViewportView(tbtraining);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -340,7 +373,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Tabel Bobot"));
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tbweight.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
                         {null, null, null, null},
                         {null, null, null, null},
@@ -351,7 +384,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                         "Title 1", "Title 2", "Title 3", "Title 4"
                 }
         ));
-        jScrollPane3.setViewportView(jTable2);
+        jScrollPane3.setViewportView(tbweight);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -360,7 +393,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                              .addGroup(jPanel4Layout.createSequentialGroup()
                                                     .addContainerGap()
                                                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addContainerGap(20, Short.MAX_VALUE))
+                                                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
                 jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -401,38 +434,5 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    public interface InteractionListener
-    {
-    }
-
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
 }
