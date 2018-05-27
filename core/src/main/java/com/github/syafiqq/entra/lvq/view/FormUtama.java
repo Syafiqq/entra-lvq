@@ -28,7 +28,7 @@ import javax.swing.JInternalFrame;
 /**
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener, JarakTestingFrame.InteractionListener, PengujianAlphaFrame.InteractionListener, PengujianDecAlphaFrame.InteractionListener, PengujianMinAlphaFrame.InteractionListener, PengujianIterasiMaxFrame.InteractionListener
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener, JarakTestingFrame.InteractionListener, PengujianAlphaFrame.InteractionListener, PengujianDecAlphaFrame.InteractionListener, PengujianMinAlphaFrame.InteractionListener, PengujianIterasiMaxFrame.InteractionListener, PengujianDatasetFrame.InteractionListener
 {
 
     private ClosableInternalFrame fDataset;
@@ -41,6 +41,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     private ClosableInternalFrame fTestDecLearningRate;
     private ClosableInternalFrame fTestMinLearningRate;
     private ClosableInternalFrame fTestMaxEpoch;
+    private ClosableInternalFrame fTestDataset;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -683,10 +684,14 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         // TODO add your handling code here:
         try
         {
-            PengujianDatasetFrame dataset = new PengujianDatasetFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
+            if(this.fTestDataset == null)
+            {
+                this.fTestDataset = new PengujianDatasetFrame(this);
+                this.jDesktopPane1.add(fTestDataset);
+                this.fTestDataset.setMaximum(true);
+                this.fTestDataset.addInternalFrameListener(e -> this.fTestDataset = null);
+            }
+            setTopAndActivate(this.fTestDataset);
         }
         catch(PropertyVetoException ex)
         {
