@@ -6,13 +6,24 @@
 package com.github.syafiqq.entra.lvq.view;
 
 import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
+import com.github.syafiqq.entra.lvq.function.model.EuclideanWeightPojo;
 import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
 import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
+import com.github.syafiqq.entra.lvq.model.database.dao.DatasetDao;
+import com.github.syafiqq.entra.lvq.model.database.dao.WeightDao;
+import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
+import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
 import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
 import com.github.syafiqq.entra.lvq.util.Settings;
+import java.awt.event.ActionEvent;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Observer;
+import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.table.DefaultTableModel;
@@ -39,6 +50,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
     {
         this.listener = listener;
         initComponents();
+        this.process.addActionListener(this::processButtonClicked);
         DefaultCaret caret = (DefaultCaret) this.jTextArea1.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
@@ -64,6 +76,111 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                 PengujianAlphaFrame.this.lvq.trainingListeners.remove(PengujianAlphaFrame.this.trainObserver);
             }
         });
+    }
+
+    private void processButtonClicked(ActionEvent actionEvent)
+    {
+        int train = 0;
+        double learningRate = 0;
+        double decLR = 0;
+        double minLR = 0;
+        int epoch = 0;
+        try
+        {
+            train = Integer.parseInt(Objects.requireNonNull(this.training.getSelectedItem()).toString());
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+        try
+        {
+            learningRate = Double.parseDouble(Objects.requireNonNull(this.learningrate.getSelectedItem()).toString());
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+        try
+        {
+            decLR = Double.parseDouble(this.lrdec.getText());
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+        try
+        {
+            minLR = Double.parseDouble(this.lrmin.getText());
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+        try
+        {
+            epoch = Integer.parseInt(this.epoch.getText());
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+
+        train = (int) (train / 100.0 * DatasetDao.getAll(Settings.DB).size());
+
+        if(train <= 9)
+        {
+            JOptionPane.showMessageDialog(this, "Field Data Latih tidak Valid atau kurang besar", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(learningRate <= 0.0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Learning Rate tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(decLR <= 0.0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Learning Reduction tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(minLR <= 0.0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Learning Rate Treshold tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(epoch <= 0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Epoch tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else
+        {
+            this.doProses(train, learningRate, decLR, minLR, epoch);
+        }
+    }
+
+    private void doProses(int train, double learningRate, double decLR, double minLR, int epoch)
+    {
+        final List<DatasetPojo> dataset = DatasetDao.getAll(Settings.DB);
+        final Map<Integer, List<DatasetPojo>> groupedDataset = dataset.stream().collect(Collectors.groupingBy(DatasetPojo::getTarget));
+
+        // Generating Dataset
+        groupedDataset.values().forEach(d -> d.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id))));
+        final List<DatasetPojo> selectedDataset = new LinkedList<>();
+        int base = -1;
+        while(train > 0)
+        {
+            ++base;
+            for(List<DatasetPojo> l : groupedDataset.values())
+            {
+                if(--train >= 0)
+                {
+                    selectedDataset.add(l.get(base));
+                }
+            }
+        }
+        selectedDataset.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id)));
+
+        //Generating Weight
+        final List<WeightPojo> weight = WeightDao.getAll(Settings.DB);
+        final Map<Integer, List<WeightPojo>> groupedWeight = weight.stream().collect(Collectors.groupingBy(WeightPojo::getTarget));
+        final List<WeightPojo> selectedWeight = new LinkedList<>();
+        selectedWeight.addAll(weight);
+
+        List<DatasetPojo> selectedTesting = dataset.stream().filter(d -> !selectedDataset.contains(d)).collect(Collectors.toList());
+        lvq.setSetting(learningRate, decLR, minLR, epoch);
+        lvq.setData(selectedDataset.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()), selectedWeight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()), selectedTesting.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()));
+        new Thread(lvq::trainingAndTesting).start();
     }
 
     private void initializeDataObserver()
