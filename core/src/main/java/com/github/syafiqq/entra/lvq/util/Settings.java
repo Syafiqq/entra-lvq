@@ -40,7 +40,7 @@ public class Settings
                     "g21",
             };
     @SuppressWarnings("NullableProblems") @NotNull public static final DatabaseApp DB;
-    private static final DBSource source = DBSource.DEFAULT;
+    private static final DBSource source = DBSource.JAR;
     private static final URL path;
 
     static
