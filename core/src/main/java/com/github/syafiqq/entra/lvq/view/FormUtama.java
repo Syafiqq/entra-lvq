@@ -28,7 +28,7 @@ import javax.swing.JInternalFrame;
 /**
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener, JarakTestingFrame.InteractionListener, PengujianAlphaFrame.InteractionListener
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener, JarakTestingFrame.InteractionListener, PengujianAlphaFrame.InteractionListener, PengujianDecAlphaFrame.InteractionListener
 {
 
     private ClosableInternalFrame fDataset;
@@ -38,6 +38,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     private ClosableInternalFrame fBobotTraining;
     private ClosableInternalFrame fJarakTesting;
     private ClosableInternalFrame fTestLearningRate;
+    private ClosableInternalFrame fTestDecLearningRate;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -620,10 +621,14 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         // TODO add your handling code here:
         try
         {
-            PengujianDecAlphaFrame dataset = new PengujianDecAlphaFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
+            if(this.fTestDecLearningRate == null)
+            {
+                this.fTestDecLearningRate = new PengujianDecAlphaFrame(this);
+                this.jDesktopPane1.add(fTestDecLearningRate);
+                this.fTestDecLearningRate.setMaximum(true);
+                this.fTestDecLearningRate.addInternalFrameListener(e -> this.fTestDecLearningRate = null);
+            }
+            setTopAndActivate(this.fTestDecLearningRate);
         }
         catch(PropertyVetoException ex)
         {
