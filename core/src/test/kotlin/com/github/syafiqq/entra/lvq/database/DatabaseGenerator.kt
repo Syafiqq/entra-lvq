@@ -37,8 +37,8 @@ class DatabaseGenerator: DatabaseDispatcher
     fun refreshAndSeed()
     {
         this.refresh()
-        WeightSeeder().run(WeightSeeder::forDebugOnly)
-        DatasetSeeder().run(DatasetSeeder::forDebugOnly)
+        WeightSeeder().run(WeightSeeder::addInitial)
+        DatasetSeeder().run(DatasetSeeder::addInitial)
     }
 }
 
