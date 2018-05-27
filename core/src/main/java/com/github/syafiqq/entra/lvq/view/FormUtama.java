@@ -28,7 +28,7 @@ import javax.swing.JInternalFrame;
 /**
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener, JarakTestingFrame.InteractionListener
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener, JarakTestingFrame.InteractionListener, PengujianAlphaFrame.InteractionListener
 {
 
     private ClosableInternalFrame fDataset;
@@ -37,6 +37,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     private ClosableInternalFrame fJarakTraining;
     private ClosableInternalFrame fBobotTraining;
     private ClosableInternalFrame fJarakTesting;
+    private ClosableInternalFrame fTestLearningRate;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -599,10 +600,14 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         // TODO add your handling code here:
         try
         {
-            PengujianAlphaFrame dataset = new PengujianAlphaFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
+            if(this.fTestLearningRate == null)
+            {
+                this.fTestLearningRate = new PengujianAlphaFrame(this);
+                this.jDesktopPane1.add(fTestLearningRate);
+                this.fTestLearningRate.setMaximum(true);
+                this.fTestLearningRate.addInternalFrameListener(e -> this.fTestLearningRate = null);
+            }
+            setTopAndActivate(this.fTestLearningRate);
         }
         catch(PropertyVetoException ex)
         {
