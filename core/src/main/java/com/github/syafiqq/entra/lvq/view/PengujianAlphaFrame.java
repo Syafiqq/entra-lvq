@@ -74,6 +74,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                 PengujianAlphaFrame.this.lvq.weightUpdateListeners.add(PengujianAlphaFrame.this.weightObserver);
                 PengujianAlphaFrame.this.lvq.distanceCalculationListener.add(PengujianAlphaFrame.this.datasetObserver);
                 PengujianAlphaFrame.this.lvq.accuracyListeners.add(PengujianAlphaFrame.this.accuracyObserver);
+                PengujianAlphaFrame.this.lvq.testAccuracyListeners.add(PengujianAlphaFrame.this.accuracyObserver);
                 PengujianAlphaFrame.this.lvq.trainingListeners.add(PengujianAlphaFrame.this.trainObserver);
 
                 PengujianAlphaFrame.this.lvq.postInitializeListener.add(PengujianAlphaFrame.this.lPostInitializationObserver);
@@ -95,6 +96,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                 PengujianAlphaFrame.this.lvq.weightUpdateListeners.remove(PengujianAlphaFrame.this.weightObserver);
                 PengujianAlphaFrame.this.lvq.distanceCalculationListener.remove(PengujianAlphaFrame.this.datasetObserver);
                 PengujianAlphaFrame.this.lvq.accuracyListeners.remove(PengujianAlphaFrame.this.accuracyObserver);
+                PengujianAlphaFrame.this.lvq.testAccuracyListeners.remove(PengujianAlphaFrame.this.accuracyObserver);
                 PengujianAlphaFrame.this.lvq.trainingListeners.remove(PengujianAlphaFrame.this.trainObserver);
 
                 PengujianAlphaFrame.this.lvq.postInitializeListener.remove(PengujianAlphaFrame.this.lPostInitializationObserver);
@@ -474,6 +476,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
     private javax.swing.JTable tbtraining;
     private javax.swing.JTable tbweight;
     private javax.swing.JComboBox<String> training;
+    // End of variables declaration//GEN-END:variables
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -729,6 +732,6 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
-    // End of variables declaration//GEN-END:variables
+    }
+    // </editor-fold>//GEN-END:initComponents
 }
