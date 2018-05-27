@@ -123,11 +123,13 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
             this.accuracy.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
             this.sameclass.setText(Integer.toString(same));
         };
-        this.trainObserver = this::repopulateTable;
+        this.trainObserver = this::resetOperation;
     }
 
-    private void repopulateTable(List<ProcessedDatasetPojo> train, List<ProcessedWeightPojo<Double>> weight)
+    private void resetOperation(List<ProcessedDatasetPojo> train, List<ProcessedWeightPojo<Double>> weight)
     {
+        this.testingLog.setLength(0);
+
         final DefaultTableModel datasetTable = (DefaultTableModel) this.tbtraining.getModel();
         datasetTable.setRowCount(0);
         train.forEach(dt -> {
