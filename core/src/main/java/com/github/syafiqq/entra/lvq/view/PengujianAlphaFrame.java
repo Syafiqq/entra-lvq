@@ -42,6 +42,16 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
     private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
     private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
     private DebuggableLVQ1.OnTrainingListener trainObserver;
+    private DebuggableLVQ1.OnPostInitializationListener lPostInitializationObserver;
+    private DebuggableLVQ1.OnPostSatisfactionListener lPostSatisfactionObserver;
+    private DebuggableLVQ1.OnDistanceCalculationListener lDistanceCalculationObserver;
+    private DebuggableLVQ1.OnWeightUpdateListener lWeightUpdateObserver;
+    private DebuggableLVQ1.OnPostReducedLearningRateListener lReducedLearningRateObserver;
+    private DebuggableLVQ1.OnPostCalculateAccuracyListener lAccuracyObserver;
+    private DebuggableLVQ1.OnPostSatisfactionEvaluationListener lSatisfactionEvaluationObserver;
+    private DebuggableLVQ1.OnDistanceCalculationListener lTestDistanceCalculationObserver;
+    private DebuggableLVQ1.OnWeightUpdateListener lTestWeightUpdateObserver;
+    private DebuggableLVQ1.OnPostCalculateAccuracyListener lTestAccuracyObserver;
 
     /**
      * Creates new form PengujianAlphaFrame
@@ -65,6 +75,18 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                 PengujianAlphaFrame.this.lvq.distanceCalculationListener.add(PengujianAlphaFrame.this.datasetObserver);
                 PengujianAlphaFrame.this.lvq.accuracyListeners.add(PengujianAlphaFrame.this.accuracyObserver);
                 PengujianAlphaFrame.this.lvq.trainingListeners.add(PengujianAlphaFrame.this.trainObserver);
+
+                PengujianAlphaFrame.this.lvq.postInitializeListener.add(PengujianAlphaFrame.this.lPostInitializationObserver);
+                PengujianAlphaFrame.this.lvq.postSatisfactionListeners.add(PengujianAlphaFrame.this.lPostSatisfactionObserver);
+                PengujianAlphaFrame.this.lvq.distanceCalculationListener.add(PengujianAlphaFrame.this.lDistanceCalculationObserver);
+                PengujianAlphaFrame.this.lvq.weightUpdateListeners.add(PengujianAlphaFrame.this.lWeightUpdateObserver);
+                PengujianAlphaFrame.this.lvq.reducedLearningRateListener.add(PengujianAlphaFrame.this.lReducedLearningRateObserver);
+                PengujianAlphaFrame.this.lvq.accuracyListeners.add(PengujianAlphaFrame.this.lAccuracyObserver);
+                PengujianAlphaFrame.this.lvq.satisfactionEvaluationListeners.add(PengujianAlphaFrame.this.lSatisfactionEvaluationObserver);
+
+                PengujianAlphaFrame.this.lvq.testDistanceCalculationListener.add(PengujianAlphaFrame.this.lTestDistanceCalculationObserver);
+                PengujianAlphaFrame.this.lvq.testWeightUpdateListeners.add(PengujianAlphaFrame.this.lTestWeightUpdateObserver);
+                PengujianAlphaFrame.this.lvq.testAccuracyListeners.add(PengujianAlphaFrame.this.lTestAccuracyObserver);
             }
 
             @Override public void internalFrameClosed(InternalFrameEvent e)
@@ -74,6 +96,18 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                 PengujianAlphaFrame.this.lvq.distanceCalculationListener.remove(PengujianAlphaFrame.this.datasetObserver);
                 PengujianAlphaFrame.this.lvq.accuracyListeners.remove(PengujianAlphaFrame.this.accuracyObserver);
                 PengujianAlphaFrame.this.lvq.trainingListeners.remove(PengujianAlphaFrame.this.trainObserver);
+
+                PengujianAlphaFrame.this.lvq.postInitializeListener.remove(PengujianAlphaFrame.this.lPostInitializationObserver);
+                PengujianAlphaFrame.this.lvq.postSatisfactionListeners.remove(PengujianAlphaFrame.this.lPostSatisfactionObserver);
+                PengujianAlphaFrame.this.lvq.distanceCalculationListener.remove(PengujianAlphaFrame.this.lDistanceCalculationObserver);
+                PengujianAlphaFrame.this.lvq.weightUpdateListeners.remove(PengujianAlphaFrame.this.lWeightUpdateObserver);
+                PengujianAlphaFrame.this.lvq.reducedLearningRateListener.remove(PengujianAlphaFrame.this.lReducedLearningRateObserver);
+                PengujianAlphaFrame.this.lvq.accuracyListeners.remove(PengujianAlphaFrame.this.lAccuracyObserver);
+                PengujianAlphaFrame.this.lvq.satisfactionEvaluationListeners.remove(PengujianAlphaFrame.this.lSatisfactionEvaluationObserver);
+
+                PengujianAlphaFrame.this.lvq.testDistanceCalculationListener.remove(PengujianAlphaFrame.this.lTestDistanceCalculationObserver);
+                PengujianAlphaFrame.this.lvq.testWeightUpdateListeners.remove(PengujianAlphaFrame.this.lTestWeightUpdateObserver);
+                PengujianAlphaFrame.this.lvq.testAccuracyListeners.remove(PengujianAlphaFrame.this.lTestAccuracyObserver);
             }
         });
     }
@@ -241,6 +275,121 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
             this.sameclass.setText(Integer.toString(same));
         };
         this.trainObserver = this::resetOperation;
+
+        this.lPostInitializationObserver = (learningRate, lrReduction, lrThreshold, maxIteration, weight, dataset) -> {
+            testingLog.append("\n==Begin Initialization Phase==\n");
+            testingLog.append(String.format("Learning Rate           = %f\n", learningRate));
+            testingLog.append(String.format("Learning Rate Reduction = %f\n", lrReduction));
+            testingLog.append(String.format("Learning Rate Threshold = %g\n", lrThreshold));
+            testingLog.append(String.format("Iteration               = %d\n", maxIteration));
+            testingLog.append("=Dataset=\n");
+            dataset.forEach(d -> testingLog.append(String.format("%s\n", d)));
+            testingLog.append("=Bobot=\n");
+            weight.forEach(w -> testingLog.append(String.format("%s\n", w)));
+            testingLog.append("==End Initialization Phase==\n");
+        };
+        this.lPostSatisfactionObserver = ((epoch, maxEpoch, learningRate, maxLearningRate, result) -> {
+            testingLog.append(String.format("\n==Begin Epoch [%d] ==\n", epoch));
+            testingLog.append("===Begin Check Satisfaction===\n");
+            testingLog.append(String.format("Iteration %d of %d\n", epoch, maxEpoch));
+            testingLog.append(String.format("LearningRate %g of %g\n", learningRate, maxLearningRate));
+            testingLog.append(String.format("Result %s\n", result ? "Satisfied" : "Not Satisfied"));
+            testingLog.append("===End Check Satisfaction===\n");
+        });
+        this.lDistanceCalculationObserver = new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("===Begin Calculate Distance===\n");
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append(String.format("Distance [%d, %d] against [%d, %d] resulting %f \n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance()));
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("===End Calculate Distance===\n");
+            }
+        };
+        this.lWeightUpdateObserver = new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+                testingLog.append("===Begin Update Weight===\n");
+                testingLog.append(String.format("Minimum weight distance is [%d, %d, %g] which are %s with data [%d %d] so the weight is move %s the data\n", weight.weight.id, weight.weight.target, weight.getDistance(), sameSignature ? "Same Class" : "Different Class", data.dataset.id, data.dataset.target, sameSignature ? "Closer to" : "Away from"));
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append(String.format("Resulting Weight is : %s\n", weight.toString()));
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append("===End Update Weight===\n");
+            }
+        };
+        this.lReducedLearningRateObserver = (lr, lrr, r) -> {
+            testingLog.append("===Begin Reduce Learning Rate===\n");
+            testingLog.append(String.format("Reduce Learning rate [%g] with learning rate reduction component [%f] resulting [%f]\n", lr, lrr, r));
+            testingLog.append("===End Reduce Learning Rate===\n");
+        };
+        this.lAccuracyObserver = (s, t, acc) -> {
+            testingLog.append("===Begin Calculate Accuracy===\n");
+            testingLog.append(String.format("The Correct Class is %d of %d resulting %f%%\n", s, t, acc));
+            testingLog.append("===End Calculate Accuracy===\n");
+        };
+        this.lSatisfactionEvaluationObserver = e -> {
+            testingLog.append("===Begin Satisfaction Evaluation===\n");
+            testingLog.append(String.format("Update Epoch to %d\n", e));
+            testingLog.append("===End Satisfaction Evaluation===\n");
+            testingLog.append(String.format("==End Epoch [%d]==\n\n", e - 1));
+        };
+
+
+        this.lTestDistanceCalculationObserver = new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("==Begin Testing==\n");
+                testingLog.append("===Begin Calculate Distance===\n");
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append(String.format("Distance [%d, %d] against [%d, %d] resulting %f \n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance()));
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("===End Calculate Distance===\n");
+            }
+        };
+        this.lTestWeightUpdateObserver = new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+                testingLog.append("===Begin Classify===\n");
+                testingLog.append(String.format("The closest distance of [%d, %d] is [%d, %d] which are [%g] so the data can be classified as Class [%d]\n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance(), data.actualTarget));
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append("===End Classify===\n");
+            }
+        };
+        this.lTestAccuracyObserver = (s, t, acc) -> {
+            testingLog.append("===Begin Calculate Accuracy===\n");
+            testingLog.append(String.format("The Correct Class is %d of %d resulting %f%%\n", s, t, acc));
+            testingLog.append("===End Calculate Accuracy===\n");
+            testingLog.append("==End Testing==\n");
+        };
     }
 
     private void resetOperation(List<ProcessedDatasetPojo> train, List<ProcessedWeightPojo<Double>> weight)
