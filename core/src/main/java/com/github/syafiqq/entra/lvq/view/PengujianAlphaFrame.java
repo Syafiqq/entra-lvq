@@ -8,10 +8,13 @@ package com.github.syafiqq.entra.lvq.view;
 import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
 import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
 import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
+import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
 import com.github.syafiqq.entra.lvq.util.Settings;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observer;
 import javax.swing.JTable;
+import javax.swing.event.InternalFrameEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
 
@@ -22,7 +25,8 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
 {
     InteractionListener listener;
     final private DebuggableLVQ1 lvq = new DebuggableLVQ1(0, 0, 0, -1, new LinkedList<>(), new LinkedList<>());
-    final private StringBuilder testingLog = new StringBuilder();
+    private OStringBuilder testingLog = new OStringBuilder(new StringBuilder());
+    private Observer logObserver;
     private DebuggableLVQ1.OnWeightUpdateListener weightObserver;
     private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
     private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
@@ -40,43 +44,31 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
 
         this.initializeDataObserver();
         this.initTable();
+        this.addInternalFrameListener(new COpenClosableInternalFrameListener()
+        {
+            @Override public void internalFrameOpened(InternalFrameEvent e)
+            {
+                PengujianAlphaFrame.this.testingLog.addObserver(PengujianAlphaFrame.this.logObserver);
+                PengujianAlphaFrame.this.lvq.weightUpdateListeners.add(PengujianAlphaFrame.this.weightObserver);
+                PengujianAlphaFrame.this.lvq.distanceCalculationListener.add(PengujianAlphaFrame.this.datasetObserver);
+                PengujianAlphaFrame.this.lvq.accuracyListeners.add(PengujianAlphaFrame.this.accuracyObserver);
+                PengujianAlphaFrame.this.lvq.trainingListeners.add(PengujianAlphaFrame.this.trainObserver);
+            }
+
+            @Override public void internalFrameClosed(InternalFrameEvent e)
+            {
+                PengujianAlphaFrame.this.testingLog.deleteObserver(PengujianAlphaFrame.this.logObserver);
+                PengujianAlphaFrame.this.lvq.weightUpdateListeners.remove(PengujianAlphaFrame.this.weightObserver);
+                PengujianAlphaFrame.this.lvq.distanceCalculationListener.remove(PengujianAlphaFrame.this.datasetObserver);
+                PengujianAlphaFrame.this.lvq.accuracyListeners.remove(PengujianAlphaFrame.this.accuracyObserver);
+                PengujianAlphaFrame.this.lvq.trainingListeners.remove(PengujianAlphaFrame.this.trainObserver);
+            }
+        });
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField accuracy;
-    private javax.swing.JTextField epoch;
-    private javax.swing.JComboBox<String> learningrate;
-    private javax.swing.JTextField lrdec;
-
-    public interface InteractionListener
-    {
-    }
-
-    private javax.swing.JTextField lrmin;
-    private javax.swing.JButton process;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField sameclass;
-    private javax.swing.JTable tbtraining;
-    private javax.swing.JTable tbweight;
-    private javax.swing.JComboBox<String> training;
 
     private void initializeDataObserver()
     {
+        this.logObserver = (o, arg) -> this.jTextArea1.setText(arg.toString());
         this.weightObserver = new DebuggableLVQ1.OnWeightUpdateListener()
         {
             @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
@@ -181,6 +173,39 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
         this.tbweight.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         this.jScrollPane3.setViewportView(this.tbweight);
     }
+
+    public interface InteractionListener
+    {
+    }
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField accuracy;
+    private javax.swing.JTextField epoch;
+    private javax.swing.JComboBox<String> learningrate;
+    private javax.swing.JTextField lrdec;
+    private javax.swing.JTextField lrmin;
+    private javax.swing.JButton process;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField sameclass;
+    private javax.swing.JTable tbtraining;
+    private javax.swing.JTable tbweight;
+    private javax.swing.JComboBox<String> training;
 
     /**
      * This method is called from within the constructor to initialize the form.
