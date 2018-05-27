@@ -130,6 +130,14 @@ public class DebuggableLVQ1 extends LVQ1
 
     @Override public void testing(List<ProcessedDatasetPojo> testing)
     {
+        try
+        {
+            Thread.sleep(2000);
+        }
+        catch(InterruptedException e)
+        {
+            e.printStackTrace();
+        }
         this.testingListeners.forEach(l -> l.doTest(this.pTesting, this.pWeight));
         for(ProcessedDatasetPojo data : testing)
         {
