@@ -5,17 +5,38 @@
  */
 package com.github.syafiqq.entra.lvq.view;
 
+import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
+import com.github.syafiqq.entra.lvq.function.model.EuclideanWeightPojo;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
+import com.github.syafiqq.entra.lvq.model.database.dao.DatasetDao;
+import com.github.syafiqq.entra.lvq.model.database.dao.WeightDao;
+import com.github.syafiqq.entra.lvq.model.database.pojo.DatasetPojo;
+import com.github.syafiqq.entra.lvq.model.database.pojo.WeightPojo;
+import com.github.syafiqq.entra.lvq.observable.java.lang.OStringBuilder;
+import com.github.syafiqq.entra.lvq.util.Settings;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Observer;
+import java.util.stream.Collectors;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.event.InternalFrameEvent;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.text.DefaultCaret;
+
 /**
  * @author Entra
  */
 public class PengujianIterasiMaxFrame extends ClosableInternalFrame
 {
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    final private DebuggableLVQ1 lvq = new DebuggableLVQ1(0, 0, 0, -1, new LinkedList<>(), new LinkedList<>());
+    InteractionListener listener;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -30,22 +51,462 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
     private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField accuracy;
+    private javax.swing.JComboBox<String> epoch;
+    private javax.swing.JTextField learningrate;
+    private javax.swing.JTextField lrdec;
+    private javax.swing.JTextField lrmin;
+    private javax.swing.JTextField sameclass;
+    private javax.swing.JTable tbtraining;
     // End of variables declaration//GEN-END:variables
+    private javax.swing.JTable tbweight;
+    private javax.swing.JComboBox<String> training;
+    private OStringBuilder testingLog = new OStringBuilder(new StringBuilder());
+    private Observer logObserver;
+    private DebuggableLVQ1.OnWeightUpdateListener weightObserver;
+    private DebuggableLVQ1.OnWeightUpdateListener testWeightObserver;
+    private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
+    private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
+    private DebuggableLVQ1.OnTrainingListener trainObserver;
+    private DebuggableLVQ1.OnTestingListener testingObserver;
+    private DebuggableLVQ1.OnPostInitializationListener lPostInitializationObserver;
+    private DebuggableLVQ1.OnPostSatisfactionListener lPostSatisfactionObserver;
+    private DebuggableLVQ1.OnDistanceCalculationListener lDistanceCalculationObserver;
+    private DebuggableLVQ1.OnWeightUpdateListener lWeightUpdateObserver;
+    private DebuggableLVQ1.OnPostReducedLearningRateListener lReducedLearningRateObserver;
+    private DebuggableLVQ1.OnPostCalculateAccuracyListener lAccuracyObserver;
+    private DebuggableLVQ1.OnPostSatisfactionEvaluationListener lSatisfactionEvaluationObserver;
+    private DebuggableLVQ1.OnDistanceCalculationListener lTestDistanceCalculationObserver;
+    private DebuggableLVQ1.OnWeightUpdateListener lTestWeightUpdateObserver;
+    private DebuggableLVQ1.OnPostCalculateAccuracyListener lTestAccuracyObserver;
 
     /**
      * Creates new form PengujianIterasiMaxFrame
      */
-    public PengujianIterasiMaxFrame()
+    public PengujianIterasiMaxFrame(InteractionListener listener)
     {
+        this.listener = listener;
         initComponents();
+        DefaultCaret caret = (DefaultCaret) this.jTextArea1.getCaret();
+        caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+
+        this.initializeDataObserver();
+        this.initTable();
+        this.addInternalFrameListener(new COpenClosableInternalFrameListener()
+        {
+            @Override public void internalFrameOpened(InternalFrameEvent e)
+            {
+                PengujianIterasiMaxFrame.this.testingLog.addObserver(PengujianIterasiMaxFrame.this.logObserver);
+                PengujianIterasiMaxFrame.this.lvq.weightUpdateListeners.add(PengujianIterasiMaxFrame.this.weightObserver);
+                PengujianIterasiMaxFrame.this.lvq.distanceCalculationListener.add(PengujianIterasiMaxFrame.this.datasetObserver);
+                PengujianIterasiMaxFrame.this.lvq.accuracyListeners.add(PengujianIterasiMaxFrame.this.accuracyObserver);
+                PengujianIterasiMaxFrame.this.lvq.testAccuracyListeners.add(PengujianIterasiMaxFrame.this.accuracyObserver);
+                PengujianIterasiMaxFrame.this.lvq.trainingListeners.add(PengujianIterasiMaxFrame.this.trainObserver);
+
+                PengujianIterasiMaxFrame.this.lvq.testingListeners.add(PengujianIterasiMaxFrame.this.testingObserver);
+                PengujianIterasiMaxFrame.this.lvq.testWeightUpdateListeners.add(PengujianIterasiMaxFrame.this.testWeightObserver);
+
+                PengujianIterasiMaxFrame.this.lvq.postInitializeListener.add(PengujianIterasiMaxFrame.this.lPostInitializationObserver);
+                PengujianIterasiMaxFrame.this.lvq.postSatisfactionListeners.add(PengujianIterasiMaxFrame.this.lPostSatisfactionObserver);
+                PengujianIterasiMaxFrame.this.lvq.distanceCalculationListener.add(PengujianIterasiMaxFrame.this.lDistanceCalculationObserver);
+                PengujianIterasiMaxFrame.this.lvq.weightUpdateListeners.add(PengujianIterasiMaxFrame.this.lWeightUpdateObserver);
+                PengujianIterasiMaxFrame.this.lvq.reducedLearningRateListener.add(PengujianIterasiMaxFrame.this.lReducedLearningRateObserver);
+                PengujianIterasiMaxFrame.this.lvq.accuracyListeners.add(PengujianIterasiMaxFrame.this.lAccuracyObserver);
+                PengujianIterasiMaxFrame.this.lvq.satisfactionEvaluationListeners.add(PengujianIterasiMaxFrame.this.lSatisfactionEvaluationObserver);
+
+                PengujianIterasiMaxFrame.this.lvq.testDistanceCalculationListener.add(PengujianIterasiMaxFrame.this.lTestDistanceCalculationObserver);
+                PengujianIterasiMaxFrame.this.lvq.testWeightUpdateListeners.add(PengujianIterasiMaxFrame.this.lTestWeightUpdateObserver);
+                PengujianIterasiMaxFrame.this.lvq.testAccuracyListeners.add(PengujianIterasiMaxFrame.this.lTestAccuracyObserver);
+            }
+
+            @Override public void internalFrameClosed(InternalFrameEvent e)
+            {
+                PengujianIterasiMaxFrame.this.testingLog.deleteObserver(PengujianIterasiMaxFrame.this.logObserver);
+                PengujianIterasiMaxFrame.this.lvq.weightUpdateListeners.remove(PengujianIterasiMaxFrame.this.weightObserver);
+                PengujianIterasiMaxFrame.this.lvq.distanceCalculationListener.remove(PengujianIterasiMaxFrame.this.datasetObserver);
+                PengujianIterasiMaxFrame.this.lvq.accuracyListeners.remove(PengujianIterasiMaxFrame.this.accuracyObserver);
+                PengujianIterasiMaxFrame.this.lvq.testAccuracyListeners.remove(PengujianIterasiMaxFrame.this.accuracyObserver);
+                PengujianIterasiMaxFrame.this.lvq.trainingListeners.remove(PengujianIterasiMaxFrame.this.trainObserver);
+
+                PengujianIterasiMaxFrame.this.lvq.testingListeners.remove(PengujianIterasiMaxFrame.this.testingObserver);
+                PengujianIterasiMaxFrame.this.lvq.testWeightUpdateListeners.add(PengujianIterasiMaxFrame.this.testWeightObserver);
+
+                PengujianIterasiMaxFrame.this.lvq.postInitializeListener.remove(PengujianIterasiMaxFrame.this.lPostInitializationObserver);
+                PengujianIterasiMaxFrame.this.lvq.postSatisfactionListeners.remove(PengujianIterasiMaxFrame.this.lPostSatisfactionObserver);
+                PengujianIterasiMaxFrame.this.lvq.distanceCalculationListener.remove(PengujianIterasiMaxFrame.this.lDistanceCalculationObserver);
+                PengujianIterasiMaxFrame.this.lvq.weightUpdateListeners.remove(PengujianIterasiMaxFrame.this.lWeightUpdateObserver);
+                PengujianIterasiMaxFrame.this.lvq.reducedLearningRateListener.remove(PengujianIterasiMaxFrame.this.lReducedLearningRateObserver);
+                PengujianIterasiMaxFrame.this.lvq.accuracyListeners.remove(PengujianIterasiMaxFrame.this.lAccuracyObserver);
+                PengujianIterasiMaxFrame.this.lvq.satisfactionEvaluationListeners.remove(PengujianIterasiMaxFrame.this.lSatisfactionEvaluationObserver);
+
+                PengujianIterasiMaxFrame.this.lvq.testDistanceCalculationListener.remove(PengujianIterasiMaxFrame.this.lTestDistanceCalculationObserver);
+                PengujianIterasiMaxFrame.this.lvq.testWeightUpdateListeners.remove(PengujianIterasiMaxFrame.this.lTestWeightUpdateObserver);
+                PengujianIterasiMaxFrame.this.lvq.testAccuracyListeners.remove(PengujianIterasiMaxFrame.this.lTestAccuracyObserver);
+            }
+        });
+    }
+
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)
+    {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        int train = 0;
+        double learningRate = 0;
+        double decLR = 0;
+        double minLR = 0;
+        int epoch = 0;
+        try
+        {
+            train = Integer.parseInt(Objects.requireNonNull(this.training.getSelectedItem()).toString());
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+        try
+        {
+            learningRate = Double.parseDouble(Objects.requireNonNull(this.learningrate.getText()));
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+        try
+        {
+            decLR = Double.parseDouble(Objects.requireNonNull(this.lrdec.getText()));
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+        try
+        {
+            minLR = Double.parseDouble(this.lrmin.getText());
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+        try
+        {
+            epoch = Integer.parseInt(Objects.requireNonNull(this.epoch.getSelectedItem()).toString());
+        }
+        catch(NumberFormatException ignored)
+        {
+        }
+
+        train = (int) (train / 100.0 * DatasetDao.getAll(Settings.DB).size());
+
+        if(train <= 9)
+        {
+            JOptionPane.showMessageDialog(this, "Field Data Latih tidak Valid atau kurang besar", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(learningRate <= 0.0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Learning Rate tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(decLR <= 0.0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Learning Reduction tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(minLR <= 0.0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Learning Rate Treshold tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else if(epoch <= 0)
+        {
+            JOptionPane.showMessageDialog(this, "Field Epoch tidak Valid", "Perhatian", JOptionPane.INFORMATION_MESSAGE, null);
+        }
+        else
+        {
+            this.doProses(train, learningRate, decLR, minLR, epoch);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void doProses(int train, double learningRate, double decLR, double minLR, int epoch)
+    {
+        final List<DatasetPojo> dataset = DatasetDao.getAll(Settings.DB);
+        final Map<Integer, List<DatasetPojo>> groupedDataset = dataset.stream().collect(Collectors.groupingBy(DatasetPojo::getTarget));
+
+        // Generating Dataset
+        groupedDataset.values().forEach(d -> d.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id))));
+        final List<DatasetPojo> selectedDataset = new LinkedList<>();
+        int base = -1;
+        while(train > 0)
+        {
+            ++base;
+            for(List<DatasetPojo> l : groupedDataset.values())
+            {
+                if(--train >= 0)
+                {
+                    selectedDataset.add(l.get(base));
+                }
+            }
+        }
+        selectedDataset.sort(Comparator.comparingInt(o -> o.target + (o.id == null ? 0 : o.id)));
+
+        //Generating Weight
+        final List<WeightPojo> weight = WeightDao.getAll(Settings.DB);
+        final Map<Integer, List<WeightPojo>> groupedWeight = weight.stream().collect(Collectors.groupingBy(WeightPojo::getTarget));
+        final List<WeightPojo> selectedWeight = new LinkedList<>();
+        selectedWeight.addAll(weight);
+
+        List<DatasetPojo> selectedTesting = dataset.stream().filter(d -> !selectedDataset.contains(d)).collect(Collectors.toList());
+        lvq.setSetting(learningRate, decLR, minLR, epoch);
+        lvq.setData(selectedDataset.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()), selectedWeight.stream().map(EuclideanWeightPojo::new).collect(Collectors.toList()), selectedTesting.stream().map(ProcessedDatasetPojo::new).collect(Collectors.toList()));
+        new Thread(lvq::trainingAndTesting).start();
+    }
+
+    private void initializeDataObserver()
+    {
+        this.logObserver = (o, arg) -> this.jTextArea1.setText(arg.toString());
+        this.weightObserver = new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+                final DefaultTableModel weightTable = (DefaultTableModel) PengujianIterasiMaxFrame.this.tbweight.getModel();
+                int index = lvq.getWeight().indexOf(weight);
+                int i = 0;
+                int c = 0;
+                for(String idx : Settings.columns)
+                {
+                    weightTable.setValueAt(weight.vector(idx), index, ++c);
+                }
+                ++i;
+                weightTable.fireTableDataChanged();
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+        };
+        this.datasetObserver = new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                final DefaultTableModel datasetTable = (DefaultTableModel) PengujianIterasiMaxFrame.this.tbtraining.getModel();
+                int index = lvq.getDataset().indexOf(data);
+                int i = 0;
+                int c = 22;
+                datasetTable.setValueAt(data.actualTarget, index, ++c);
+                ++i;
+                datasetTable.fireTableDataChanged();
+            }
+        };
+        this.accuracyObserver = (same, size, accuracy) -> {
+            this.accuracy.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
+            this.sameclass.setText(Integer.toString(same));
+        };
+        this.trainObserver = this::resetOperation;
+
+        this.testingObserver = this::repopulateTable;
+        this.testWeightObserver = new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+                final DefaultTableModel datasetTable = (DefaultTableModel) PengujianIterasiMaxFrame.this.tbtraining.getModel();
+                int index = PengujianIterasiMaxFrame.this.lvq.getTesting().indexOf(data);
+                int i = 0;
+                int c = 22;
+                datasetTable.setValueAt(data.actualTarget, index, ++c);
+                ++i;
+                datasetTable.fireTableDataChanged();
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+        };
+
+        this.lPostInitializationObserver = (learningRate, lrReduction, lrThreshold, maxIteration, weight, dataset) -> {
+            testingLog.append("\n==Begin Initialization Phase==\n");
+            testingLog.append(String.format("Learning Rate           = %f\n", learningRate));
+            testingLog.append(String.format("Learning Rate Reduction = %f\n", lrReduction));
+            testingLog.append(String.format("Learning Rate Threshold = %g\n", lrThreshold));
+            testingLog.append(String.format("Iteration               = %d\n", maxIteration));
+            testingLog.append("=Dataset=\n");
+            dataset.forEach(d -> testingLog.append(String.format("%s\n", d)));
+            testingLog.append("=Bobot=\n");
+            weight.forEach(w -> testingLog.append(String.format("%s\n", w)));
+            testingLog.append("==End Initialization Phase==\n");
+        };
+        this.lPostSatisfactionObserver = ((epoch, maxEpoch, learningRate, maxLearningRate, result) -> {
+            testingLog.append(String.format("\n==Begin Epoch [%d] ==\n", epoch));
+            testingLog.append("===Begin Check Satisfaction===\n");
+            testingLog.append(String.format("Iteration %d of %d\n", epoch, maxEpoch));
+            testingLog.append(String.format("LearningRate %g of %g\n", learningRate, maxLearningRate));
+            testingLog.append(String.format("Result %s\n", result ? "Satisfied" : "Not Satisfied"));
+            testingLog.append("===End Check Satisfaction===\n");
+        });
+        this.lDistanceCalculationObserver = new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("===Begin Calculate Distance===\n");
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append(String.format("Distance [%d, %d] against [%d, %d] resulting %f \n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance()));
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("===End Calculate Distance===\n");
+            }
+        };
+        this.lWeightUpdateObserver = new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+                testingLog.append("===Begin Update Weight===\n");
+                testingLog.append(String.format("Minimum weight distance is [%d, %d, %g] which are %s with data [%d %d] so the weight is move %s the data\n", weight.weight.id, weight.weight.target, weight.getDistance(), sameSignature ? "Same Class" : "Different Class", data.dataset.id, data.dataset.target, sameSignature ? "Closer to" : "Away from"));
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append(String.format("Resulting Weight is : %s\n", weight.toString()));
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append("===End Update Weight===\n");
+            }
+        };
+        this.lReducedLearningRateObserver = (lr, lrr, r) -> {
+            testingLog.append("===Begin Reduce Learning Rate===\n");
+            testingLog.append(String.format("Reduce Learning rate [%g] with learning rate reduction component [%f] resulting [%f]\n", lr, lrr, r));
+            testingLog.append("===End Reduce Learning Rate===\n");
+        };
+        this.lAccuracyObserver = (s, t, acc) -> {
+            testingLog.append("===Begin Calculate Accuracy===\n");
+            testingLog.append(String.format("The Correct Class is %d of %d resulting %f%%\n", s, t, acc));
+            testingLog.append("===End Calculate Accuracy===\n");
+        };
+        this.lSatisfactionEvaluationObserver = e -> {
+            testingLog.append("===Begin Satisfaction Evaluation===\n");
+            testingLog.append(String.format("Update Epoch to %d\n", e));
+            testingLog.append("===End Satisfaction Evaluation===\n");
+            testingLog.append(String.format("==End Epoch [%d]==\n\n", e - 1));
+        };
+
+
+        this.lTestDistanceCalculationObserver = new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("==Begin Testing==\n");
+                testingLog.append("===Begin Calculate Distance===\n");
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append(String.format("Distance [%d, %d] against [%d, %d] resulting %f \n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance()));
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                testingLog.append("===End Calculate Distance===\n");
+            }
+        };
+        this.lTestWeightUpdateObserver = new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+                testingLog.append("===Begin Classify===\n");
+                testingLog.append(String.format("The closest distance of [%d, %d] is [%d, %d] which are [%g] so the data can be classified as Class [%d]\n", data.dataset.id, data.dataset.target, weight.weight.id, weight.weight.target, weight.getDistance(), data.actualTarget));
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+                testingLog.append("===End Classify===\n");
+            }
+        };
+        this.lTestAccuracyObserver = (s, t, acc) -> {
+            testingLog.append("===Begin Calculate Accuracy===\n");
+            testingLog.append(String.format("The Correct Class is %d of %d resulting %f%%\n", s, t, acc));
+            testingLog.append("===End Calculate Accuracy===\n");
+            testingLog.append("==End Testing==\n");
+        };
+    }
+
+    private void resetOperation(List<ProcessedDatasetPojo> train, List<ProcessedWeightPojo<Double>> weight)
+    {
+        this.testingLog.setLength(0);
+        this.repopulateTable(train, weight);
+    }
+
+    private void repopulateTable(List<ProcessedDatasetPojo> list, List<ProcessedWeightPojo<Double>> weight)
+    {
+        final DefaultTableModel datasetTable = (DefaultTableModel) this.tbtraining.getModel();
+        datasetTable.setRowCount(0);
+        list.forEach(dt -> {
+            Object[] data = new Object[24];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.dataset.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.dataset.target;
+            data[++c] = dt.actualTarget;
+            ++i;
+            datasetTable.addRow(data);
+        });
+        datasetTable.fireTableDataChanged();
+
+        final DefaultTableModel weightTable = (DefaultTableModel) this.tbweight.getModel();
+        weightTable.setRowCount(0);
+        weight.forEach(dt -> {
+            Object[] data = new Object[23];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.weight.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.weight.target;
+            ++i;
+            weightTable.addRow(data);
+        });
+        weightTable.fireTableDataChanged();
+    }
+
+    private void initTable()
+    {
+        this.tbtraining.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target", "Aktual-Target"}));
+        this.tbtraining.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.jScrollPane2.setViewportView(this.tbtraining);
+        this.tbweight.setModel(new DefaultTableModel(null, new String[] {"No", "Sakit/Nyeri kepala hebat", "Penglihatan kabur perlahan", "Silau", "Merah", "Nyeri", "Perut mual", "Penglihatan berkabut(berasap)", "Lensa mata keruh", "Gatal", "Berair", "Belekan", "Kelopak bengkak", "Panas", "Mengganjal", "Lengket", "Merah jika terkena sinar matahari", "Tumbuh selaput pada mata", "Timbul bayangan", "Usia > 50 tahun", "Kelopak mata timbul benjolan", "Perih", "Target"}));
+        this.tbweight.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        this.jScrollPane3.setViewportView(this.tbweight);
     }
 
     /**
@@ -59,11 +520,11 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
     {
 
         jPanel1 = new javax.swing.JPanel();
-        jComboBox1 = new javax.swing.JComboBox<>();
-        jComboBox2 = new javax.swing.JComboBox<>();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        training = new javax.swing.JComboBox<>();
+        epoch = new javax.swing.JComboBox<>();
+        learningrate = new javax.swing.JTextField();
+        lrdec = new javax.swing.JTextField();
+        lrmin = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -75,15 +536,15 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jLabel6 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        sameclass = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        accuracy = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbtraining = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        tbweight = new javax.swing.JTable();
 
         setClosable(true);
         setMaximizable(true);
@@ -91,9 +552,9 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Parameter Pengujian"));
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"10", "20", "30", "40", "50", "60", "70", "80", "90"}));
+        training.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"10", "20", "30", "40", "50", "60", "70", "80", "90"}));
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"2", "4", "6", "8", "10", "12", "14", "16", "18", "20"}));
+        epoch.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"2", "4", "6", "8", "10", "12", "14", "16", "18", "20"}));
 
         jLabel1.setText("Data Latih (%)");
 
@@ -106,6 +567,13 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
         jLabel5.setText("Iterasi Maksimum (MaxEpoh)");
 
         jButton1.setText("Proses");
+        jButton1.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Ulang Proses");
 
@@ -125,11 +593,11 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
                                                                                                                          .addComponent(jLabel5))
                                                                                                   .addGap(18, 18, 18)
                                                                                                   .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                                                                                         .addComponent(jTextField2)
-                                                                                                                         .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.LEADING)
-                                                                                                                         .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                                                                         .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                                                                         .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                                                                         .addComponent(lrdec)
+                                                                                                                         .addComponent(learningrate, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                                                                         .addComponent(training, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                                                                         .addComponent(lrmin, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                                         .addComponent(epoch, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                                                            .addGroup(jPanel1Layout.createSequentialGroup()
                                                                                                   .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                                   .addGap(42, 42, 42)
@@ -141,15 +609,15 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
                              .addGroup(jPanel1Layout.createSequentialGroup()
                                                     .addContainerGap()
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                           .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                           .addComponent(training, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                            .addComponent(jLabel1))
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                                            .addComponent(jLabel2)
-                                                                           .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                           .addComponent(learningrate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                                           .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                           .addComponent(lrdec, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                            .addComponent(jLabel3))
                                                     .addGap(13, 13, 13)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,9 +626,9 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
                                                                                                   .addGap(17, 17, 17)
                                                                                                   .addComponent(jLabel5))
                                                                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                                                                                  .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                  .addComponent(lrmin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                                   .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                  .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                                                  .addComponent(epoch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                                     .addGap(25, 25, 25)
                                                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                                            .addComponent(jButton1)
@@ -189,11 +657,11 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
                                                                            .addGroup(jPanel2Layout.createSequentialGroup()
                                                                                                   .addComponent(jLabel6)
                                                                                                   .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                                                                  .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                                  .addComponent(sameclass, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                                                   .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                                                                   .addComponent(jLabel7)
                                                                                                   .addGap(18, 18, 18)
-                                                                                                  .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                                                                  .addComponent(accuracy, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                                     .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -204,15 +672,15 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
                                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                                                            .addComponent(jLabel6)
-                                                                           .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                           .addComponent(sameclass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                                            .addComponent(jLabel7)
-                                                                           .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                           .addComponent(accuracy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                     .addContainerGap(18, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Tabel Data"));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbtraining.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
                         {null, null, null, null},
                         {null, null, null, null},
@@ -223,7 +691,7 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
                         "Title 1", "Title 2", "Title 3", "Title 4"
                 }
         ));
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPane2.setViewportView(tbtraining);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -244,7 +712,7 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Tabel Bobot"));
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tbweight.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][] {
                         {null, null, null, null},
                         {null, null, null, null},
@@ -255,7 +723,7 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
                         "Title 1", "Title 2", "Title 3", "Title 4"
                 }
         ));
-        jScrollPane3.setViewportView(jTable2);
+        jScrollPane3.setViewportView(tbweight);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -264,7 +732,7 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
                              .addGroup(jPanel4Layout.createSequentialGroup()
                                                     .addContainerGap()
                                                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                    .addContainerGap(20, Short.MAX_VALUE))
+                                                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
                 jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -305,4 +773,8 @@ public class PengujianIterasiMaxFrame extends ClosableInternalFrame
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    public interface InteractionListener
+    {
+    }
 }
