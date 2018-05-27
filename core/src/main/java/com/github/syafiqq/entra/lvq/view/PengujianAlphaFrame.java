@@ -127,7 +127,10 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                 datasetTable.fireTableDataChanged();
             }
         };
-        this.accuracyObserver = (same, size, accuracy) -> this.accuracy.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
+        this.accuracyObserver = (same, size, accuracy) -> {
+            this.accuracy.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
+            this.sameclass.setText(Integer.toString(same));
+        };
         this.trainObserver = this::repopulateTable;
     }
 
