@@ -28,7 +28,7 @@ import javax.swing.JInternalFrame;
 /**
  * @author Entra
  */
-public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener, JarakTestingFrame.InteractionListener, PengujianAlphaFrame.InteractionListener, PengujianDecAlphaFrame.InteractionListener
+public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMataFrame.InteractionListener, ProsesPelatihanLVQFrame.InteractionListener, ProsesPengujianLVQFrame.InteractionListener, JarakTrainingFrame.InteractionListener, BobotTrainingFrame.InteractionListener, JarakTestingFrame.InteractionListener, PengujianAlphaFrame.InteractionListener, PengujianDecAlphaFrame.InteractionListener, PengujianMinAlphaFrame.InteractionListener
 {
 
     private ClosableInternalFrame fDataset;
@@ -39,6 +39,7 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
     private ClosableInternalFrame fJarakTesting;
     private ClosableInternalFrame fTestLearningRate;
     private ClosableInternalFrame fTestDecLearningRate;
+    private ClosableInternalFrame fTestMinLearningRate;
     private OList<DatasetPojo> dataset;
     private OList<WeightPojo> weight;
     private OList<ProcessedDatasetPojo> oDataset;
@@ -641,10 +642,14 @@ public class FormUtama extends javax.swing.JFrame implements DatasetPenyakitMata
         // TODO add your handling code here:
         try
         {
-            PengujianMinAlphaFrame dataset = new PengujianMinAlphaFrame();
-            jDesktopPane1.add(dataset);
-            dataset.setMaximum(true);
-            dataset.show();
+            if(this.fTestMinLearningRate == null)
+            {
+                this.fTestMinLearningRate = new PengujianMinAlphaFrame(this);
+                this.jDesktopPane1.add(fTestMinLearningRate);
+                this.fTestMinLearningRate.setMaximum(true);
+                this.fTestMinLearningRate.addInternalFrameListener(e -> this.fTestMinLearningRate = null);
+            }
+            setTopAndActivate(this.fTestMinLearningRate);
         }
         catch(PropertyVetoException ex)
         {
