@@ -42,6 +42,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
     private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
     private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
     private DebuggableLVQ1.OnTrainingListener trainObserver;
+    private DebuggableLVQ1.OnTestingListener testingObserver;
     private DebuggableLVQ1.OnPostInitializationListener lPostInitializationObserver;
     private DebuggableLVQ1.OnPostSatisfactionListener lPostSatisfactionObserver;
     private DebuggableLVQ1.OnDistanceCalculationListener lDistanceCalculationObserver;
@@ -76,6 +77,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                 PengujianAlphaFrame.this.lvq.accuracyListeners.add(PengujianAlphaFrame.this.accuracyObserver);
                 PengujianAlphaFrame.this.lvq.testAccuracyListeners.add(PengujianAlphaFrame.this.accuracyObserver);
                 PengujianAlphaFrame.this.lvq.trainingListeners.add(PengujianAlphaFrame.this.trainObserver);
+                PengujianAlphaFrame.this.lvq.testingListeners.add(PengujianAlphaFrame.this.testingObserver);
 
                 PengujianAlphaFrame.this.lvq.postInitializeListener.add(PengujianAlphaFrame.this.lPostInitializationObserver);
                 PengujianAlphaFrame.this.lvq.postSatisfactionListeners.add(PengujianAlphaFrame.this.lPostSatisfactionObserver);
@@ -98,6 +100,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
                 PengujianAlphaFrame.this.lvq.accuracyListeners.remove(PengujianAlphaFrame.this.accuracyObserver);
                 PengujianAlphaFrame.this.lvq.testAccuracyListeners.remove(PengujianAlphaFrame.this.accuracyObserver);
                 PengujianAlphaFrame.this.lvq.trainingListeners.remove(PengujianAlphaFrame.this.trainObserver);
+                PengujianAlphaFrame.this.lvq.testingListeners.remove(PengujianAlphaFrame.this.testingObserver);
 
                 PengujianAlphaFrame.this.lvq.postInitializeListener.remove(PengujianAlphaFrame.this.lPostInitializationObserver);
                 PengujianAlphaFrame.this.lvq.postSatisfactionListeners.remove(PengujianAlphaFrame.this.lPostSatisfactionObserver);
@@ -277,6 +280,7 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
             this.sameclass.setText(Integer.toString(same));
         };
         this.trainObserver = this::resetOperation;
+        this.testingObserver = this::repopulateTable;
 
         this.lPostInitializationObserver = (learningRate, lrReduction, lrThreshold, maxIteration, weight, dataset) -> {
             testingLog.append("\n==Begin Initialization Phase==\n");
@@ -397,10 +401,14 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
     private void resetOperation(List<ProcessedDatasetPojo> train, List<ProcessedWeightPojo<Double>> weight)
     {
         this.testingLog.setLength(0);
+        this.repopulateTable(train, weight);
+    }
 
+    private void repopulateTable(List<ProcessedDatasetPojo> list, List<ProcessedWeightPojo<Double>> weight)
+    {
         final DefaultTableModel datasetTable = (DefaultTableModel) this.tbtraining.getModel();
         datasetTable.setRowCount(0);
-        train.forEach(dt -> {
+        list.forEach(dt -> {
             Object[] data = new Object[24];
             int i = 0;
             int c = -1;
