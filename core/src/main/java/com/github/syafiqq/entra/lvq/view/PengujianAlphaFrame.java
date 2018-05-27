@@ -5,6 +5,12 @@
  */
 package com.github.syafiqq.entra.lvq.view;
 
+import com.github.syafiqq.entra.lvq.function.DebuggableLVQ1;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedDatasetPojo;
+import com.github.syafiqq.entra.lvq.function.model.ProcessedWeightPojo;
+import com.github.syafiqq.entra.lvq.util.Settings;
+import java.util.LinkedList;
+import java.util.List;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultCaret;
@@ -14,8 +20,13 @@ import javax.swing.text.DefaultCaret;
  */
 public class PengujianAlphaFrame extends ClosableInternalFrame
 {
-
     InteractionListener listener;
+    final private DebuggableLVQ1 lvq = new DebuggableLVQ1(0, 0, 0, -1, new LinkedList<>(), new LinkedList<>());
+    final private StringBuilder testingLog = new StringBuilder();
+    private DebuggableLVQ1.OnWeightUpdateListener weightObserver;
+    private DebuggableLVQ1.OnDistanceCalculationListener datasetObserver;
+    private DebuggableLVQ1.OnPostCalculateAccuracyListener accuracyObserver;
+    private DebuggableLVQ1.OnTrainingListener trainObserver;
 
     /**
      * Creates new form PengujianAlphaFrame
@@ -27,7 +38,102 @@ public class PengujianAlphaFrame extends ClosableInternalFrame
         DefaultCaret caret = (DefaultCaret) this.jTextArea1.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
+        this.initializeDataObserver();
         this.initTable();
+    }
+
+    private void initializeDataObserver()
+    {
+        this.weightObserver = new DebuggableLVQ1.OnWeightUpdateListener()
+        {
+            @Override public void preUpdate(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight, boolean sameSignature)
+            {
+
+            }
+
+            @Override public void update(ProcessedWeightPojo<Double> weight)
+            {
+                final DefaultTableModel weightTable = (DefaultTableModel) PengujianAlphaFrame.this.jTable2.getModel();
+                int index = lvq.getWeight().indexOf(weight);
+                int i = 0;
+                int c = 0;
+                for(String idx : Settings.columns)
+                {
+                    weightTable.setValueAt(weight.vector(idx), index, ++c);
+                }
+                ++i;
+                weightTable.fireTableDataChanged();
+            }
+
+            @Override public void postUpdate(ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+        };
+        this.datasetObserver = new DebuggableLVQ1.OnDistanceCalculationListener()
+        {
+
+            @Override public void preCalculated(ProcessedDatasetPojo data)
+            {
+
+            }
+
+            @Override public void calculated(ProcessedDatasetPojo data, ProcessedWeightPojo<Double> weight)
+            {
+
+            }
+
+            @Override public void postCalculated(ProcessedDatasetPojo data)
+            {
+                final DefaultTableModel datasetTable = (DefaultTableModel) PengujianAlphaFrame.this.jTable1.getModel();
+                int index = lvq.getDataset().indexOf(data);
+                int i = 0;
+                int c = 22;
+                datasetTable.setValueAt(data.actualTarget, index, ++c);
+                ++i;
+                datasetTable.fireTableDataChanged();
+            }
+        };
+        this.accuracyObserver = (same, size, accuracy) -> this.jTextField1.setText(String.format("%d of %d [%g%%]", same, size, accuracy));
+        this.trainObserver = this::repopulateTable;
+    }
+
+    private void repopulateTable(List<ProcessedDatasetPojo> train, List<ProcessedWeightPojo<Double>> weight)
+    {
+        final DefaultTableModel datasetTable = (DefaultTableModel) this.jTable1.getModel();
+        datasetTable.setRowCount(0);
+        train.forEach(dt -> {
+            Object[] data = new Object[24];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.dataset.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.dataset.target;
+            data[++c] = dt.actualTarget;
+            ++i;
+            datasetTable.addRow(data);
+        });
+        datasetTable.fireTableDataChanged();
+
+        final DefaultTableModel weightTable = (DefaultTableModel) this.jTable2.getModel();
+        weightTable.setRowCount(0);
+        weight.forEach(dt -> {
+            Object[] data = new Object[23];
+            int i = 0;
+            int c = -1;
+            data[++c] = dt.weight.id;
+            for(String idx : Settings.columns)
+            {
+                data[++c] = dt.vector(idx);
+            }
+            data[++c] = dt.weight.target;
+            ++i;
+            weightTable.addRow(data);
+        });
+        weightTable.fireTableDataChanged();
     }
 
     private void initTable()
